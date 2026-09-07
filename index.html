@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>신재훈 | The Developer Experience</title>
+  <meta name="description" content="Santioni Spirits Inspired Cinematic Portfolio of Jaehoon Shin.">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts: Cinzel, Syne, Outfit & Pretendard -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="locked-state">
+
+  <!-- Custom Cursor -->
+  <div class="custom-cursor" id="custom-cursor">
+    <div class="cursor-dot"></div>
+    <div class="cursor-circle"></div>
+  </div>
+
+  <!-- Noise Overlay -->
+  <div class="noise-bg"></div>
+
+  <!-- ======================================================================
+       0. Cinematic AgeGate / Passcode Screen (Santioni Style)
+       ====================================================================== -->
+  <div class="gate-overlay" id="gate-screen">
+    <div class="gate-corners">
+      <span class="corner tl">+</span>
+      <span class="corner tr">+</span>
+      <span class="corner bl">+</span>
+      <span class="corner br">+</span>
+    </div>
+
+    <div class="gate-container">
+      <div class="gate-header">
+        <span class="gate-label">[ PRIVATE ARCHIVE // 2026 ]</span>
+      </div>
+
+      <div class="gate-title-wrapper">
+        <h1 class="gate-main-title">SHIN JAEHOON</h1>
+        <div class="gate-sub-title">DEVELOPER PORTFOLIO &bull; THE CHRONICLES</div>
+      </div>
+
+      <div class="gate-box">
+        <p class="gate-instruction">ENTER ACCESS PASSCODE TO PROCEED</p>
+        
+        <form id="gate-form" class="gate-form" autocomplete="off">
+          <div class="gate-input-wrapper">
+            <input type="password" id="gate-password" placeholder="PASSCODE (DEFAULT: 1234)" autofocus required>
+            <button type="button" id="gate-toggle-eye" class="gate-eye-btn" aria-label="Toggle Password Visibility">
+              <i class="fa-regular fa-eye" id="gate-eye-icon"></i>
+            </button>
+          </div>
+          <div class="gate-error-message" id="gate-error-msg">ACCESS DENIED. INVALID PASSCODE.</div>
+          
+          <div class="gate-actions">
+            <button type="submit" class="gate-btn" id="gate-submit-btn">
+              <span>ENTER EXPERIENCE</span>
+              <span class="btn-arrow">&rarr;</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="gate-hint">
+          <span>DEFAULT PASSCODE: <strong>1234</strong></span>
+        </div>
+      </div>
+
+      <div class="gate-footer">
+        <span>SANGMYUNG UNIVERSITY &bull; SOFTWARE &bull; ALL RIGHTS RESERVED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       1. Header & Floating Menu Bar (Santioni Pill Menu)
+       ====================================================================== -->
+  <header class="header-menu" id="header-menu">
+    <div class="header-capsule">
+      <a href="#hero" class="header-brand">
+        <span class="brand-name">JAEHOON</span>
+        <span class="brand-tag">DEV.</span>
+      </a>
+
+      <nav class="header-nav">
+        <a href="#hero" class="nav-item active" data-target="hero">01 OVERTURE</a>
+        <a href="#about" class="nav-item" data-target="about">02 PROFILE</a>
+        <a href="#skills" class="nav-item" data-target="skills">03 MATRIX</a>
+        <a href="#projects" class="nav-item" data-target="projects">04 STORIES</a>
+        <a href="#timeline" class="nav-item" data-target="timeline">05 ARCHIVE</a>
+        <a href="#contact" class="nav-item" data-target="contact">06 TRANSMISSION</a>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Re-Lock Button -->
+        <button class="icon-btn" id="lock-btn" title="Lock Portfolio" aria-label="Lock Portfolio">
+          <i class="fa-solid fa-lock"></i>
+        </button>
+        <!-- Mobile Toggle -->
+        <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle Menu">
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sound Toggle Visualizer (Santioni Style) -->
+  <div class="sound-toggle" id="sound-toggle" title="Toggle Ambience Sound" role="button" tabindex="0">
+    <div class="sound-bars">
+      <span class="bar bar-1"></span>
+      <span class="bar bar-2"></span>
+      <span class="bar bar-3"></span>
+      <span class="bar bar-4"></span>
+    </div>
+    <span class="sound-text">SOUND: <strong id="sound-status">OFF</strong></span>
+  </div>
+
+  <!-- ======================================================================
+       2. Main Content Canvas
+       ====================================================================== -->
+  <main id="stage">
+
+    <!-- ------------------------------------------------------------------
+         SCENE 01: HERO / THE OVERTURE
+         ------------------------------------------------------------------ -->
+    <section class="scene scene-hero" id="hero">
+      <div class="editorial-container">
+        <!-- Top Editorial Meta -->
+        <div class="scene-meta-header">
+          <div class="meta-left">
+            <span class="meta-num">[ SCENE 01 ]</span>
+            <span class="meta-label">PORTFOLIO OVERTURE &bull; SEOUL, KR</span>
+          </div>
+          <div class="meta-right">
+            <span class="meta-dept">SANGMYUNG UNIV. // DEPT. OF SOFTWARE</span>
+          </div>
+        </div>
+
+        <!-- Big Display Title -->
+        <div class="hero-title-area">
+          <h1 class="hero-huge-title">
+            <span class="title-line">SHIN JAEHOON</span>
+            <span class="title-subline">SOFTWARE CRAFTSMAN</span>
+          </h1>
+        </div>
+
+        <!-- Editorial Split Panel -->
+        <div class="hero-split-grid">
+          <!-- Left Panel: Photographic Art Frame -->
+          <div class="panel-box photo-panel" data-tilt>
+            <div class="panel-corners">
+              <span class="corner tl">+</span>
+              <span class="corner tr">+</span>
+              <span class="corner bl">+</span>
+              <span class="corner br">+</span>
+            </div>
+            <div class="panel-tag">FIG. 01 // PORTRAIT</div>
+            <div class="photo-wrapper">
+              <img src="profile.jpg" alt="신재훈 사진" class="editorial-img" id="hero-profile-img">
+              <div class="photo-tint-overlay"></div>
+            </div>
+            <div class="panel-caption">
+              <span class="caption-title">신재훈 (SHIN JAEHOON)</span>
+              <span class="caption-desc">Full Stack Engineer / Problem Solver</span>
+            </div>
+          </div>
+
+          <!-- Right Panel: Statement & Coordinates -->
+          <div class="panel-box statement-panel">
+            <div class="panel-corners">
+              <span class="corner tl">+</span>
+              <span class="corner tr">+</span>
+              <span class="corner bl">+</span>
+              <span class="corner br">+</span>
+            </div>
+            <div class="panel-tag">CHAPTER // MANIFESTO</div>
+
+            <div class="statement-body">
+              <h2 class="statement-heading">
+                기술의 본질을 파고들고,<br>
+                <span class="crimson-highlight">사람을 위한 소프트웨어</span>를 만듭니다.
+              </h2>
+              
+              <div class="statement-divider"></div>
+
+              <p class="statement-paragraph">
+                상명대학교에서 소프트웨어 공학을 전공하며 견고한 백엔드와 생동감 넘치는 프론트엔드 인터랙션을 연구합니다.
+                화려한 겉모습에 그치지 않고, 시스템의 안정성과 사용자 편의를 최우선으로 고민하며 개발합니다.
+              </p>
+
+              <!-- Dynamic Typing Manifesto -->
+              <div class="editorial-typing">
+                <span class="typing-lead">CURRENT FOCUS : </span>
+                <span class="typing-text" id="typing-text"></span>
+                <span class="typing-cursor">_</span>
+              </div>
+
+              <div class="hero-btn-row">
+                <a href="#projects" class="santioni-btn btn-filled">
+                  <span>DISCOVER STORIES</span>
+                  <i class="fa-solid fa-arrow-down"></i>
+                </a>
+                <a href="#contact" class="santioni-btn btn-outlined">
+                  <span>GET IN TOUCH</span>
+                  <i class="fa-solid fa-paper-plane"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="panel-footer-meta">
+              <div class="foot-col">
+                <span class="foot-lbl">LOCATION</span>
+                <span class="foot-val">Seoul, Korea</span>
+              </div>
+              <div class="foot-col">
+                <span class="foot-lbl">EMAIL</span>
+                <span class="foot-val">sin53118153@gmail.com</span>
+              </div>
+              <div class="foot-col">
+                <span class="foot-lbl">ACADEMIA</span>
+                <span class="foot-val">SangMyung Univ.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------
+         SCENE 02: ABOUT & PHILOSOPHY
+         -------------------------------------------------- -->
+    <section class="scene scene-about" id="about">
+      <div class="editorial-container">
+        <div class="scene-meta-header">
+          <div class="meta-left">
+            <span class="meta-num">[ SCENE 02 ]</span>
+            <span class="meta-label">PROFILE & PHILOSOPHY</span>
+          </div>
+          <div class="meta-right">
+            <span class="meta-dept">02 // 06</span>
+          </div>
+        </div>
+
+        <div class="section-title-wrapper">
+          <h2 class="editorial-title">THE ARCHITECT’S MIND</h2>
+          <p class="editorial-subtitle">문제를 대하는 태도와 개발자로서 지켜나가는 원칙들</p>
+        </div>
+
+        <!-- 4-Editorial Comic Panels Grid -->
+        <div class="about-panels-grid">
+          <!-- Panel 1 -->
+          <div class="panel-box about-item-panel" data-tilt>
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner br">+</span></div>
+            <div class="panel-num">01</div>
+            <div class="panel-icon-wrap"><i class="fa-solid fa-code-commit"></i></div>
+            <h3 class="panel-heading">CLEAN & MODULAR</h3>
+            <h4 class="panel-korean-sub">읽기 쉽고 예측 가능한 코드</h4>
+            <p class="panel-text">
+              코드는 작성하는 시간보다 읽히는 시간이 훨씬 깁니다. 모듈화와 명확한 네이밍을 통해 협업하는 동료와 미래의 나 자신 모두가 납득할 수 있는 코드를 지향합니다.
+            </p>
+          </div>
+
+          <!-- Panel 2 -->
+          <div class="panel-box about-item-panel" data-tilt>
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner br">+</span></div>
+            <div class="panel-num">02</div>
+            <div class="panel-icon-wrap"><i class="fa-solid fa-microchip"></i></div>
+            <h3 class="panel-heading">DEEP DIVE PROBLEM SOLVING</h3>
+            <h4 class="panel-korean-sub">원인을 파고드는 집요함</h4>
+            <p class="panel-text">
+              오류나 성능 병목이 발생했을 때 임시방편으로 덮지 않습니다. 네트워크 패킷, 렌더 트리, DB 실행 계획을 분석하여 근본적인 발생 원인을 규명하고 해결합니다.
+            </p>
+          </div>
+
+          <!-- Panel 3 -->
+          <div class="panel-box about-item-panel" data-tilt>
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner br">+</span></div>
+            <div class="panel-num">03</div>
+            <div class="panel-icon-wrap"><i class="fa-solid fa-layer-group"></i></div>
+            <h3 class="panel-heading">USER-CENTRIC IMMERSION</h3>
+            <h4 class="panel-korean-sub">사용자가 체감하는 매끄러운 경험</h4>
+            <p class="panel-text">
+              인터랙티브한 모션과 빠른 응답 속도는 단순한 장식이 아닌 사용성 그 자체입니다. 인터페이스의 반응성과 접근성을 면밀하게 설계하여 몰입감을 전달합니다.
+            </p>
+          </div>
+
+          <!-- Panel 4 -->
+          <div class="panel-box about-item-panel" data-tilt>
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner br">+</span></div>
+            <div class="panel-num">04</div>
+            <div class="panel-icon-wrap"><i class="fa-solid fa-hand-holding-hand"></i></div>
+            <h3 class="panel-heading">OPEN COLLABORATION</h3>
+            <h4 class="panel-korean-sub">신뢰와 배움의 팀워크</h4>
+            <p class="panel-text">
+              상명대학교에서의 전공 프로젝트 및 협업 경험을 통해 건설적인 코드 리뷰와 투명한 의사소통이 결과물의 완성도를 얼마나 높여주는지 깊이 체감하고 있습니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------
+         SCENE 03: TECH MATRIX (SKILLS)
+         -------------------------------------------------- -->
+    <section class="scene scene-skills" id="skills">
+      <div class="editorial-container">
+        <div class="scene-meta-header">
+          <div class="meta-left">
+            <span class="meta-num">[ SCENE 03 ]</span>
+            <span class="meta-label">TECHNICAL MATRIX</span>
+          </div>
+          <div class="meta-right">
+            <span class="meta-dept">03 // 06</span>
+          </div>
+        </div>
+
+        <div class="section-title-wrapper">
+          <h2 class="editorial-title">SKILLS & CAPABILITIES</h2>
+          <p class="editorial-subtitle">문제를 해결하기 위해 적재적소에 활용하는 기술 스택</p>
+        </div>
+
+        <div class="skills-matrix-grid">
+          <!-- Column 1: Frontend -->
+          <div class="panel-box skill-col-panel">
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+            <div class="matrix-header">
+              <span class="matrix-tag">COL. A // CLIENT</span>
+              <h3 class="matrix-title">FRONTEND</h3>
+            </div>
+            <ul class="matrix-list">
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">JavaScript (ES6+) / TypeScript</span>
+                  <span class="m-val">88%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 88%;"></div></div>
+              </li>
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">React / Next.js Framework</span>
+                  <span class="m-val">85%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 85%;"></div></div>
+              </li>
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">HTML5 / Modern CSS / Animations</span>
+                  <span class="m-val">90%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 90%;"></div></div>
+              </li>
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">Tailwind CSS & Styled System</span>
+                  <span class="m-val">82%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 82%;"></div></div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 2: Backend & Database -->
+          <div class="panel-box skill-col-panel">
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+            <div class="matrix-header">
+              <span class="matrix-tag">COL. B // SERVER & DB</span>
+              <h3 class="matrix-title">BACKEND</h3>
+            </div>
+            <ul class="matrix-list">
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">Node.js & Express RESTful API</span>
+                  <span class="m-val">82%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 82%;"></div></div>
+              </li>
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">Python & FastAPI</span>
+                  <span class="m-val">80%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 80%;"></div></div>
+              </li>
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">MySQL / PostgreSQL RDBMS</span>
+                  <span class="m-val">82%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 82%;"></div></div>
+              </li>
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">Java Core Architecture</span>
+                  <span class="m-val">75%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 75%;"></div></div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 3: DevOps & Tools -->
+          <div class="panel-box skill-col-panel">
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+            <div class="matrix-header">
+              <span class="matrix-tag">COL. C // ENVIRONMENT</span>
+              <h3 class="matrix-title">DEV TOOLS</h3>
+            </div>
+            <ul class="matrix-list">
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">Git Version Control & GitHub</span>
+                  <span class="m-val">88%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 88%;"></div></div>
+              </li>
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">Docker & Containerization</span>
+                  <span class="m-val">72%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 72%;"></div></div>
+              </li>
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">Linux Environment & Shell</span>
+                  <span class="m-val">80%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 80%;"></div></div>
+              </li>
+              <li class="matrix-item">
+                <div class="matrix-info">
+                  <span class="m-name">Figma UI Prototyping</span>
+                  <span class="m-val">78%</span>
+                </div>
+                <div class="m-bar"><div class="m-fill" style="width: 78%;"></div></div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------
+         SCENE 04: FEATURED STORIES (PROJECTS)
+         -------------------------------------------------- -->
+    <section class="scene scene-projects" id="projects">
+      <div class="editorial-container">
+        <div class="scene-meta-header">
+          <div class="meta-left">
+            <span class="meta-num">[ SCENE 04 ]</span>
+            <span class="meta-label">FEATURED STORIES &bull; WORKS</span>
+          </div>
+          <div class="meta-right">
+            <span class="meta-dept">04 // 06</span>
+          </div>
+        </div>
+
+        <div class="section-title-wrapper">
+          <h2 class="editorial-title">CHRONICLES OF WORK</h2>
+          <p class="editorial-subtitle">아이디어를 현실로 구현해낸 주요 프로젝트 챕터</p>
+        </div>
+
+        <!-- Project Filter Buttons (Editorial Style) -->
+        <div class="editorial-filters">
+          <button class="ed-filter-btn active" data-filter="all">ALL STORIES</button>
+          <button class="ed-filter-btn" data-filter="campus">CAMPUS DEV</button>
+          <button class="ed-filter-btn" data-filter="web">WEB APPLICATION</button>
+          <button class="ed-filter-btn" data-filter="study">LAB & RESEARCH</button>
+        </div>
+
+        <!-- Stories Grid -->
+        <div class="stories-grid">
+          <!-- Story 01 -->
+          <article class="panel-box story-card" data-category="campus" data-id="1" data-tilt>
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+            <div class="story-header-meta">
+              <span class="vol-tag">VOL. 01 // CAMPUS WEB</span>
+              <span class="status-tag">STABLE BUILD</span>
+            </div>
+            
+            <div class="story-visual visual-1">
+              <div class="visual-inner">
+                <i class="fa-solid fa-graduation-cap story-icon"></i>
+                <div class="visual-noise"></div>
+              </div>
+            </div>
+
+            <div class="story-content">
+              <h3 class="story-title">상명대 스터디룸 예약 및 캘린더 플랫폼</h3>
+              <p class="story-summary">
+                학생들의 교내 스터디룸 및 빈 강의실 예약 편의를 위해 개발된 실시간 타임테이블 예약 시스템입니다.
+              </p>
+              
+              <div class="story-tags">
+                <span>React</span>
+                <span>Node.js</span>
+                <span>MySQL</span>
+                <span>Express</span>
+              </div>
+
+              <div class="story-actions">
+                <button class="santioni-action-btn btn-open-modal" data-project="1">
+                  <span>READ STORY</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="View Source on GitHub">
+                  <i class="fa-brands fa-github"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Story 02 -->
+          <article class="panel-box story-card" data-category="web" data-id="2" data-tilt>
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+            <div class="story-header-meta">
+              <span class="vol-tag">VOL. 02 // DEV ARCHIVE</span>
+              <span class="status-tag">ACTIVE</span>
+            </div>
+            
+            <div class="story-visual visual-2">
+              <div class="visual-inner">
+                <i class="fa-solid fa-laptop-code story-icon"></i>
+                <div class="visual-noise"></div>
+              </div>
+            </div>
+
+            <div class="story-content">
+              <h3 class="story-title">알고리즘 풀이 & 개발 지식 아카이빙 블로그</h3>
+              <p class="story-summary">
+                마크다운 문법을 실시간 파싱하여 복잡한 알고리즘 풀이와 웹 기술 트러블슈팅을 체계적으로 축적하는 개인 블로그입니다.
+              </p>
+              
+              <div class="story-tags">
+                <span>JavaScript</span>
+                <span>HTML5 / CSS3</span>
+                <span>LocalStorage</span>
+                <span>SEO</span>
+              </div>
+
+              <div class="story-actions">
+                <button class="santioni-action-btn btn-open-modal" data-project="2">
+                  <span>READ STORY</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="View Source on GitHub">
+                  <i class="fa-brands fa-github"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Story 03 -->
+          <article class="panel-box story-card" data-category="study" data-id="3" data-tilt>
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+            <div class="story-header-meta">
+              <span class="vol-tag">VOL. 03 // STUDY LAB</span>
+              <span class="status-tag">PROTOTYPE</span>
+            </div>
+            
+            <div class="story-visual visual-3">
+              <div class="visual-inner">
+                <i class="fa-solid fa-book-open-reader story-icon"></i>
+                <div class="visual-noise"></div>
+              </div>
+            </div>
+
+            <div class="story-content">
+              <h3 class="story-title">전공 강의 핵심 요약 및 퀴즈 생성 어시스턴트</h3>
+              <p class="story-summary">
+                방대한 전공 시험 범위를 단시간에 복습할 수 있도록 핵심 용어를 추출하고 실시간 4지선다 퀴즈를 생성하는 학습 툴입니다.
+              </p>
+              
+              <div class="story-tags">
+                <span>Python</span>
+                <span>FastAPI</span>
+                <span>React</span>
+                <span>REST API</span>
+              </div>
+
+              <div class="story-actions">
+                <button class="santioni-action-btn btn-open-modal" data-project="3">
+                  <span>READ STORY</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="View Source on GitHub">
+                  <i class="fa-brands fa-github"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Story 04 -->
+          <article class="panel-box story-card" data-category="web" data-id="4" data-tilt>
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+            <div class="story-header-meta">
+              <span class="vol-tag">VOL. 04 // PRODUCTIVITY</span>
+              <span class="status-tag">STABLE</span>
+            </div>
+            
+            <div class="story-visual visual-4">
+              <div class="visual-inner">
+                <i class="fa-solid fa-clock-rotate-left story-icon"></i>
+                <div class="visual-noise"></div>
+              </div>
+            </div>
+
+            <div class="story-content">
+              <h3 class="story-title">몰입형 집중 타이머 & 칸반 할 일 관리 보드</h3>
+              <p class="story-summary">
+                뽀모도로 집중 기법과 드래그 앤 드롭 칸반을 결합하여 코딩 작업 및 공부 루틴을 체계적으로 관리하는 생산성 도구입니다.
+              </p>
+              
+              <div class="story-tags">
+                <span>Vanilla JS</span>
+                <span>Drag & Drop API</span>
+                <span>Web Audio API</span>
+                <span>CSS Grid</span>
+              </div>
+
+              <div class="story-actions">
+                <button class="santioni-action-btn btn-open-modal" data-project="4">
+                  <span>READ STORY</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="View Source on GitHub">
+                  <i class="fa-brands fa-github"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------
+         SCENE 05: TIMELINE ARCHIVE
+         -------------------------------------------------- -->
+    <section class="scene scene-timeline" id="timeline">
+      <div class="editorial-container">
+        <div class="scene-meta-header">
+          <div class="meta-left">
+            <span class="meta-num">[ SCENE 05 ]</span>
+            <span class="meta-label">CHRONOLOGICAL ARCHIVE</span>
+          </div>
+          <div class="meta-right">
+            <span class="meta-dept">05 // 06</span>
+          </div>
+        </div>
+
+        <div class="section-title-wrapper">
+          <h2 class="editorial-title">TIMELINE & JOURNEY</h2>
+          <p class="editorial-subtitle">상명대학교에서의 전공 심화 및 개발 발자취</p>
+        </div>
+
+        <div class="editorial-timeline">
+          <!-- Timeline Entry 1 -->
+          <div class="timeline-row panel-box">
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner br">+</span></div>
+            <div class="t-year">2024 - PRESENT</div>
+            <div class="t-main">
+              <span class="t-badge">ACADEMIA</span>
+              <h3 class="t-title">상명대학교 (SangMyung University)</h3>
+              <h4 class="t-role">소프트웨어 전공 심화</h4>
+              <p class="t-desc">
+                자료구조, 알고리즘, 운영체제, 컴퓨터 네트워크, 데이터베이스 등 탄탄한 컴퓨터 공학 기초 이론을 이수하고 다양한 전공 팀 프로젝트를 수행 중입니다.
+              </p>
+            </div>
+          </div>
+
+          <!-- Timeline Entry 2 -->
+          <div class="timeline-row panel-box">
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner br">+</span></div>
+            <div class="t-year">2025</div>
+            <div class="t-main">
+              <span class="t-badge">PROJECT & COLLAB</span>
+              <h3 class="t-title">팀 프로젝트 & 서비스 구현</h3>
+              <h4 class="t-role">웹 프론트엔드 및 백엔드 개발</h4>
+              <p class="t-desc">
+                팀원들과의 적극적인 Git 브랜치 협업 및 코드 리뷰를 통해 학내 불편 사항을 해결하는 스터디룸 예약 및 일정 관리 웹 서비스를 구현했습니다.
+              </p>
+            </div>
+          </div>
+
+          <!-- Timeline Entry 3 -->
+          <div class="timeline-row panel-box">
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner br">+</span></div>
+            <div class="t-year">CONTINUOUS</div>
+            <div class="t-main">
+              <span class="t-badge">EXPANSION</span>
+              <h3 class="t-title">기술 아카이빙 및 인터랙티브 웹 연구</h3>
+              <h4 class="t-role">지속적인 기술 학습 및 기록</h4>
+              <p class="t-desc">
+                현대적인 웹 인터랙션 기법과 클린 아키텍처를 연구하며, 개발 과정에서 발생한 트러블슈팅과 배운 점을 블로그에 체계적으로 기록하고 있습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------
+         SCENE 06: CONTACT / TRANSMISSION
+         -------------------------------------------------- -->
+    <section class="scene scene-contact" id="contact">
+      <div class="editorial-container">
+        <div class="scene-meta-header">
+          <div class="meta-left">
+            <span class="meta-num">[ SCENE 06 ]</span>
+            <span class="meta-label">TRANSMISSION & CONTACT</span>
+          </div>
+          <div class="meta-right">
+            <span class="meta-dept">06 // 06</span>
+          </div>
+        </div>
+
+        <div class="section-title-wrapper">
+          <h2 class="editorial-title">INITIATE CONTACT</h2>
+          <p class="editorial-subtitle">협업 제안, 프로젝트 문의 또는 이야기를 나누고 싶다면 메시지를 보내주세요.</p>
+        </div>
+
+        <div class="contact-editorial-grid">
+          <!-- Direct Channel Info -->
+          <div class="panel-box contact-direct-panel">
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+            <div class="panel-tag">DIRECT CHANNELS</div>
+
+            <div class="direct-item">
+              <span class="direct-lbl">ELECTRONIC MAIL</span>
+              <span class="direct-val">sin53118153@gmail.com</span>
+              <button class="santioni-copy-btn" id="copy-email-btn" data-email="sin53118153@gmail.com">
+                <i class="fa-regular fa-copy"></i>
+                <span>COPY ADDRESS</span>
+              </button>
+            </div>
+
+            <div class="direct-item">
+              <span class="direct-lbl">AFFILIATION & CAMPUS</span>
+              <span class="direct-val">SangMyung University, Seoul</span>
+              <span class="direct-sub">서울특별시 종로구 홍지문2길 20</span>
+            </div>
+
+            <div class="direct-item">
+              <span class="direct-lbl">NETWORK CHANNELS</span>
+              <div class="editorial-social-links">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="ed-social-btn">
+                  <i class="fa-brands fa-github"></i> GITHUB
+                </a>
+                <a href="https://velog.io" target="_blank" rel="noopener noreferrer" class="ed-social-btn">
+                  <i class="fa-solid fa-blog"></i> VELOG
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Message Form -->
+          <div class="panel-box contact-form-panel">
+            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+            <div class="panel-tag">DISPATCH MESSAGE</div>
+
+            <form id="editorial-form" class="editorial-form">
+              <div class="form-row">
+                <div class="ed-field">
+                  <label for="c-name">SENDER NAME / 성함</label>
+                  <input type="text" id="c-name" placeholder="홍길동" required>
+                </div>
+                <div class="ed-field">
+                  <label for="c-email">REPLY EMAIL / 이메일</label>
+                  <input type="email" id="c-email" placeholder="example@domain.com" required>
+                </div>
+              </div>
+
+              <div class="ed-field">
+                <label for="c-subject">SUBJECT / 제목</label>
+                <input type="text" id="c-subject" placeholder="프로젝트 협업 문의" required>
+              </div>
+
+              <div class="ed-field">
+                <label for="c-message">MESSAGE BODY / 내용</label>
+                <textarea id="c-message" rows="4" placeholder="전달하실 메시지를 입력해주세요." required></textarea>
+              </div>
+
+              <button type="submit" class="santioni-btn btn-filled form-submit-btn" id="btn-form-submit">
+                <span>SEND TRANSMISSION</span>
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       3. Project Story Modal (Cinematic Modal)
+       ====================================================================== -->
+  <div class="story-modal-overlay" id="story-modal" aria-hidden="true">
+    <div class="story-modal-panel panel-box">
+      <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+      
+      <button class="modal-exit-btn" id="modal-exit-btn" aria-label="Close Story">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="m-modal-meta">
+        <span class="m-vol" id="modal-vol">VOL. 01</span>
+        <span class="m-cat" id="modal-cat">CAMPUS DEV</span>
+      </div>
+
+      <h2 class="m-modal-title" id="modal-title">프로젝트 제목</h2>
+      
+      <div class="m-modal-body">
+        <div class="m-section">
+          <h4 class="m-sec-title">[ OVERVIEW ]</h4>
+          <p class="m-sec-desc" id="modal-desc">상세 설명</p>
+        </div>
+
+        <div class="m-section">
+          <h4 class="m-sec-title">[ ARCHITECTURE & FEATURES ]</h4>
+          <ul class="m-sec-list" id="modal-features">
+            <!-- Features dynamic -->
+          </ul>
+        </div>
+
+        <div class="m-section">
+          <h4 class="m-sec-title">[ TECH STACK MATRIX ]</h4>
+          <div class="m-sec-tags" id="modal-tags">
+            <!-- Tags dynamic -->
+          </div>
+        </div>
+      </div>
+
+      <div class="m-modal-footer">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="santioni-btn btn-outlined" id="modal-github">
+          <i class="fa-brands fa-github"></i> GITHUB REPOSITORY
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-shelf" id="toast-shelf"></div>
+
+  <!-- ======================================================================
+       4. Editorial Footer (Santioni Style)
+       ====================================================================== -->
+  <footer class="editorial-footer">
+    <div class="editorial-container">
+      <div class="footer-huge-sign">
+        <span>SHIN JAEHOON</span>
+      </div>
+
+      <div class="footer-sub-grid">
+        <div class="f-col">
+          <span class="f-lbl">CREDITS</span>
+          <p>Designed & Developed by Shin Jaehoon &bull; Inspired by Santioni Spirits / Active Theory</p>
+        </div>
+        <div class="f-col">
+          <span class="f-lbl">SECURITY</span>
+          <p>Private Gate Protected &bull; Session Auth</p>
+        </div>
+        <div class="f-col f-right">
+          <a href="#hero" class="f-top-link" id="f-top-btn">
+            <span>BACK TO TOP</span>
+            <i class="fa-solid fa-arrow-up"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom-line">
+        <span>&copy; 2026 SHIN JAEHOON. ALL RIGHTS RESERVED.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+</body>
+</html>

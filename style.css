@@ -1,38 +1,38 @@
 /* ==========================================================================
-   SHIN JAEHOON // THE SANTIONI SPIRITS INSPIRED PORTFOLIO
-   Cinematic Editorial & Comic Frame Design System
+  SHIN JAEHOON // LANDSCAPE ARCHITECTURE PORTFOLIO
+  Botanical Editorial Design System
    ========================================================================== */
 
 /* --------------------------------------------------
    1. Design Tokens & Variables
    -------------------------------------------------- */
 :root {
-  /* Santioni Dark Noir Palette */
-  --bg-noir: #121212;
-  --bg-deep: #0a0a0a;
-  --bg-panel: #181818;
-  --bg-panel-sub: #1e1e1e;
-  --bg-input: #151515;
+  /* Forest, moss, stone and earth palette */
+  --bg-noir: #14231d;
+  --bg-deep: #0b1712;
+  --bg-panel: #1c3027;
+  --bg-panel-sub: #243b30;
+  --bg-input: #17291f;
 
-  /* Santioni Crimson Accent */
-  --accent-crimson: #c82924;
-  --accent-crimson-bright: #e63946;
-  --accent-crimson-glow: rgba(200, 41, 36, 0.4);
+  /* Moss and clay accents */
+  --accent-crimson: #b7c96b;
+  --accent-crimson-bright: #d7df8d;
+  --accent-crimson-glow: rgba(183, 201, 107, 0.3);
 
   /* Typography Colors */
   --text-pure: #ffffff;
-  --text-primary: #f4f4f0;
-  --text-secondary: #a3a399;
-  --text-muted: #66665e;
+  --text-primary: #f1eee3;
+  --text-secondary: #b5bbaa;
+  --text-muted: #768579;
 
   /* Borders & Ornaments */
   --border-line: rgba(255, 255, 255, 0.12);
   --border-line-light: rgba(255, 255, 255, 0.22);
-  --border-crimson: #c82924;
+  --border-crimson: #b7c96b;
 
   /* Typography Families */
-  --font-serif: 'Cinzel', serif;
-  --font-display: 'Syne', sans-serif;
+  --font-serif: 'Cormorant Garamond', 'Noto Serif KR', serif;
+  --font-display: 'Manrope', 'Pretendard', sans-serif;
   --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Outfit', monospace, sans-serif;
 
@@ -53,12 +53,13 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  background-color: var(--bg-noir);
+  background-color: var(--bg-deep);
 }
 
 body {
   font-family: var(--font-body);
   background-color: var(--bg-noir);
+  background-image: radial-gradient(circle at 12% 15%, rgba(183, 201, 107, 0.08), transparent 28%), linear-gradient(135deg, var(--bg-deep), var(--bg-noir) 48%, #20382b);
   color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;
@@ -72,7 +73,7 @@ body.locked-state {
 
 ::selection {
   background: var(--accent-crimson);
-  color: #ffffff;
+  color: var(--bg-deep);
 }
 
 /* Custom Scrollbar */
@@ -88,6 +89,26 @@ body.locked-state {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-crimson);
+}
+
+/* Landscape cues: quiet borders, organic light and clay details. */
+.panel-box {
+  border-color: rgba(183, 201, 107, 0.2);
+  background: linear-gradient(145deg, rgba(36, 59, 48, 0.92), rgba(20, 35, 29, 0.94));
+  box-shadow: 0 18px 45px rgba(4, 12, 8, 0.22);
+}
+
+.panel-box:hover {
+  border-color: var(--accent-crimson);
+  box-shadow: 0 22px 52px rgba(4, 12, 8, 0.34);
+}
+
+.photo-tint-overlay {
+  background: linear-gradient(145deg, rgba(183, 201, 107, 0.12), rgba(123, 73, 48, 0.28));
+}
+
+.crimson-highlight {
+  color: var(--accent-crimson);
 }
 
 a {

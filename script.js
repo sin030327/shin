@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '모바일 최적화 반응형 레이아웃 설계'
       ],
       tags: ['React', 'Node.js', 'Express', 'MySQL', 'CSS Modules'],
-      github: 'https://github.com'
+      github: 'https://github.com/sin030327/shin'
     },
     2: {
       vol: 'VOL. 02',
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '시맨틱 태그 구조 및 검색 엔진 최적화(SEO) 반영'
       ],
       tags: ['JavaScript', 'HTML5/CSS3', 'LocalStorage', 'Markdown Parser'],
-      github: 'https://github.com'
+      github: 'https://github.com/sin030327/shin'
     },
     3: {
       vol: 'VOL. 03',
@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '학습 정리 결과 PDF 및 텍스트 파일 내보내기 지원'
       ],
       tags: ['Python', 'FastAPI', 'React', 'REST API'],
-      github: 'https://github.com'
+      github: 'https://github.com/sin030327/shin'
     },
     4: {
       vol: 'VOL. 04',
@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '눈의 피로를 최소화하는 정교한 다크 에디토리얼 UI'
       ],
       tags: ['Vanilla JS', 'Drag & Drop API', 'Web Audio API', 'CSS Grid'],
-      github: 'https://github.com'
+      github: 'https://github.com/sin030327/shin'
     }
   };
 

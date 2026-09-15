@@ -620,4 +620,213 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 300);
     }, 3200);
   }
+
+  // ==========================================================================
+  // 10. Share Menu (Link 공유 / PDF로 저장)
+  // ==========================================================================
+  const shareMenuWrapper = document.getElementById('share-menu-wrapper');
+  const shareBtn = document.getElementById('share-btn');
+  const shareDropdown = document.getElementById('share-dropdown');
+  const shareLinkBtn = document.getElementById('share-link-btn');
+  const sharePdfBtn = document.getElementById('share-pdf-btn');
+
+  function closeShareDropdown() {
+    if (!shareDropdown) return;
+    shareDropdown.classList.remove('open');
+    shareDropdown.setAttribute('aria-hidden', 'true');
+    if (shareBtn) shareBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  if (shareBtn && shareDropdown) {
+    shareBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = shareDropdown.classList.toggle('open');
+      shareDropdown.setAttribute('aria-hidden', String(!isOpen));
+      shareBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (shareMenuWrapper && !shareMenuWrapper.contains(e.target)) {
+        closeShareDropdown();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeShareDropdown();
+    });
+  }
+
+  if (shareLinkBtn) {
+    shareLinkBtn.addEventListener('click', async () => {
+      closeShareDropdown();
+      const url = window.location.href;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: document.title, url });
+          return;
+        } catch (err) {
+          // 사용자가 공유를 취소한 경우 등은 별도 처리 없이 무시
+          return;
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('링크가 클립보드에 복사되었습니다');
+      } catch (err) {
+        showToast('링크 복사에 실패했습니다');
+      }
+    });
+  }
+
+  if (sharePdfBtn) {
+    sharePdfBtn.addEventListener('click', () => {
+      closeShareDropdown();
+      buildPdfExportDocument();
+      window.print();
+    });
+  }
+
+  // 화면에 보이는 실제 콘텐츠(About/Skills/Timeline/Contact)와 projectStories 데이터를
+  // 그대로 읽어와 인쇄 전용 구조화 문서를 새로 조립한다.
+  // -> 콘텐츠를 두 곳에 중복 작성하지 않고, 화면 내용이 바뀌면 PDF에도 그대로 반영된다.
+  function buildPdfExportDocument() {
+    const doc = document.getElementById('pdf-export-doc');
+    if (!doc) return;
+
+    const esc = (s) => String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    const text = (el) => (el ? el.textContent.replace(/\s+/g, ' ').trim() : '');
+
+    const name = text(document.querySelector('.title-line'));
+    const role = text(document.querySelector('.title-subline'));
+    const statement = text(document.querySelector('.statement-heading'));
+    const paragraph = text(document.querySelector('.statement-paragraph'));
+    const email = document.getElementById('copy-email-btn')?.getAttribute('data-email') || '';
+
+    const directItems = document.querySelectorAll('.contact-direct-panel .direct-item');
+    let affiliation = '', address = '';
+    if (directItems[1]) {
+      affiliation = text(directItems[1].querySelector('.direct-val'));
+      address = text(directItems[1].querySelector('.direct-sub'));
+    }
+    const socialLinks = Array.from(document.querySelectorAll('.ed-social-btn')).map(a => ({
+      label: text(a),
+      href: a.getAttribute('href') || ''
+    }));
+
+    const aboutItems = Array.from(document.querySelectorAll('.about-item-panel')).map(panel => ({
+      heading: text(panel.querySelector('.panel-heading')),
+      sub: text(panel.querySelector('.panel-korean-sub')),
+      body: text(panel.querySelector('.panel-text'))
+    }));
+
+    const skillCols = Array.from(document.querySelectorAll('.skill-col-panel')).map(col => ({
+      title: text(col.querySelector('.matrix-title')),
+      items: Array.from(col.querySelectorAll('.matrix-item')).map(li => ({
+        name: text(li.querySelector('.m-name')),
+        val: text(li.querySelector('.m-val'))
+      }))
+    }));
+
+    const timelineItems = Array.from(document.querySelectorAll('.timeline-row')).map(row => ({
+      year: text(row.querySelector('.t-year')),
+      title: text(row.querySelector('.t-title')),
+      role: text(row.querySelector('.t-role')),
+      desc: text(row.querySelector('.t-desc'))
+    }));
+
+    let html = '';
+
+    html += `<header class="pdf-header">
+      <h1>${esc(name)}</h1>
+      <p class="pdf-role">${esc(role)}</p>
+      <p class="pdf-contact">${[esc(email), esc(affiliation)].filter(Boolean).join(' · ')}</p>
+      ${address ? `<p class="pdf-contact-sub">${esc(address)}</p>` : ''}
+    </header>`;
+
+    html += `<section class="pdf-section">
+      <h2>소개</h2>
+      <p class="pdf-statement">${esc(statement)}</p>
+      <p>${esc(paragraph)}</p>
+    </section>`;
+
+    if (aboutItems.length) {
+      html += `<section class="pdf-section"><h2>작업 원칙</h2><div class="pdf-about-grid">`;
+      aboutItems.forEach(item => {
+        html += `<div class="pdf-about-item">
+          <h3>${esc(item.heading)}</h3>
+          <h4>${esc(item.sub)}</h4>
+          <p>${esc(item.body)}</p>
+        </div>`;
+      });
+      html += `</div></section>`;
+    }
+
+    if (skillCols.length) {
+      html += `<section class="pdf-section"><h2>기술 스택</h2><div class="pdf-skills-grid">`;
+      skillCols.forEach(col => {
+        html += `<div class="pdf-skill-col"><h3>${esc(col.title)}</h3><ul>`;
+        col.items.forEach(it => {
+          html += `<li><span>${esc(it.name)}</span><span class="pdf-skill-val">${esc(it.val)}</span></li>`;
+        });
+        html += `</ul></div>`;
+      });
+      html += `</div></section>`;
+    }
+
+    const projectIds = Object.keys(projectStories);
+    if (projectIds.length) {
+      html += `<section class="pdf-section"><h2>프로젝트</h2>`;
+      projectIds.forEach(id => {
+        const p = projectStories[id];
+        html += `<div class="pdf-project">
+          <div class="pdf-project-head">
+            <span class="pdf-project-vol">${esc(p.vol)}</span>
+            <span class="pdf-project-cat">${esc(p.cat)}</span>
+            ${p.award ? `<span class="pdf-project-award">🏆 ${esc(p.award)}</span>` : ''}
+          </div>
+          <h3>${esc(p.title)}</h3>
+          <p>${esc(p.desc)}</p>
+          <ul class="pdf-project-features">
+            ${p.features.map(f => `<li>${esc(f)}</li>`).join('')}
+          </ul>
+          <div class="pdf-project-tags">${p.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>
+          ${(p.github || (p.links && p.links.length)) ? `<div class="pdf-project-links">
+            ${p.github ? `<span>GitHub: ${esc(p.github)}</span>` : ''}
+            ${(p.links || []).map(l => `<span>${esc(l.label)}: ${esc(l.url)}</span>`).join('')}
+          </div>` : ''}
+        </div>`;
+      });
+      html += `</section>`;
+    }
+
+    if (timelineItems.length) {
+      html += `<section class="pdf-section"><h2>타임라인</h2>`;
+      timelineItems.forEach(t => {
+        html += `<div class="pdf-timeline-item">
+          <span class="pdf-timeline-year">${esc(t.year)}</span>
+          <div>
+            <h3>${esc(t.title)}</h3>
+            <h4>${esc(t.role)}</h4>
+            <p>${esc(t.desc)}</p>
+          </div>
+        </div>`;
+      });
+      html += `</section>`;
+    }
+
+    if (socialLinks.length) {
+      html += `<section class="pdf-section"><h2>연락처 &amp; 링크</h2><ul class="pdf-social-list">`;
+      socialLinks.forEach(s => {
+        html += `<li>${esc(s.label)}: ${esc(s.href)}</li>`;
+      });
+      html += `</ul></section>`;
+    }
+
+    doc.innerHTML = html;
+  }
 });

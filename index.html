@@ -101,6 +101,22 @@
       </nav>
 
       <div class="header-actions">
+        <!-- Share Menu (Link / PDF) -->
+        <div class="share-menu-wrapper" id="share-menu-wrapper">
+          <button class="icon-btn" id="share-btn" title="공유하기" aria-label="공유하기" aria-haspopup="true" aria-expanded="false">
+            <i class="fa-solid fa-share-nodes"></i>
+          </button>
+          <div class="share-dropdown" id="share-dropdown" role="menu" aria-hidden="true">
+            <button class="share-option" id="share-link-btn" role="menuitem">
+              <i class="fa-solid fa-link"></i>
+              <span>링크 공유</span>
+            </button>
+            <button class="share-option" id="share-pdf-btn" role="menuitem">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>PDF로 저장</span>
+            </button>
+          </div>
+        </div>
         <!-- Re-Lock Button -->
         <button class="icon-btn" id="lock-btn" title="Lock Portfolio" aria-label="Lock Portfolio">
           <i class="fa-solid fa-lock"></i>
@@ -916,6 +932,12 @@
       </div>
     </div>
   </footer>
+
+  <!-- ======================================================================
+       5. PDF Export Document (print-only, built dynamically by script.js
+          from live content — never shown on screen, only when printing)
+       ====================================================================== -->
+  <div id="pdf-export-doc" class="pdf-doc" aria-hidden="true"></div>
 
   <!-- Scripts -->
   <script src="script.js"></script>

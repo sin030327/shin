@@ -494,6 +494,63 @@ button, input, textarea {
   transform: scale(1.08);
 }
 
+/* Share Menu (Link 공유 / PDF로 저장) */
+.share-menu-wrapper {
+  position: relative;
+}
+
+.share-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 180px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: 12px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), visibility var(--transition-fast);
+  z-index: 500;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.share-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.share-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.share-option:hover {
+  background: var(--bg-panel-sub);
+}
+
+.share-option i {
+  width: 16px;
+  color: var(--accent-crimson);
+}
+
 .mobile-toggle {
   display: none;
   flex-direction: column;
@@ -1719,6 +1776,254 @@ button, input, textarea {
 
 .f-top-link:hover {
   color: var(--accent-crimson);
+}
+
+/* --------------------------------------------------
+   18. PDF Export Document (print-only)
+   화면에서는 항상 숨겨져 있고, "PDF로 저장" 클릭 시 JS가
+   내용을 채운 뒤 window.print()를 호출할 때만 보인다.
+   -------------------------------------------------- */
+.pdf-doc {
+  display: none;
+}
+
+@media print {
+  /* 사이트의 어두운 배경(다크 테마)이 PDF 문서 바깥 여백에 비치지 않도록 강제로 흰 배경 처리 */
+  html,
+  body {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+
+  /* 사이트의 나머지 요소(네비게이션, 히어로, 게이트, 모달, 토스트 등)는
+     인쇄 시 전부 제외하고, PDF 전용 문서만 출력한다. */
+  body > *:not(#pdf-export-doc) {
+    display: none !important;
+  }
+
+  #pdf-export-doc {
+    display: block !important;
+    background: #ffffff;
+    color: #1a1a1a;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 11pt;
+    line-height: 1.55;
+  }
+
+  @page {
+    margin: 16mm;
+  }
+
+  .pdf-header {
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 12px;
+    margin-bottom: 22px;
+  }
+
+  .pdf-header h1 {
+    font-size: 24pt;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .pdf-role {
+    font-size: 12pt;
+    font-weight: 700;
+    color: #3f6b2f;
+    margin-bottom: 8px;
+  }
+
+  .pdf-contact,
+  .pdf-contact-sub {
+    font-size: 9.5pt;
+    color: #444444;
+  }
+
+  .pdf-section {
+    margin-bottom: 22px;
+    page-break-inside: avoid;
+  }
+
+  .pdf-section h2 {
+    font-size: 14pt;
+    font-weight: 800;
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+  }
+
+  .pdf-statement {
+    font-size: 12pt;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .pdf-about-grid,
+  .pdf-skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .pdf-about-item h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+  }
+
+  .pdf-about-item h4 {
+    font-size: 9.5pt;
+    font-weight: 500;
+    color: #555555;
+    margin-bottom: 4px;
+  }
+
+  .pdf-about-item p {
+    font-size: 9.5pt;
+    color: #333333;
+  }
+
+  .pdf-skill-col h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .pdf-skill-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .pdf-skill-col li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 9.5pt;
+    padding: 3px 0;
+    border-bottom: 1px dotted #dddddd;
+  }
+
+  .pdf-skill-val {
+    color: #3f6b2f;
+    font-weight: 700;
+  }
+
+  .pdf-project {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #e0e0e0;
+    page-break-inside: avoid;
+  }
+
+  .pdf-project-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 8.5pt;
+    color: #666666;
+    margin-bottom: 4px;
+  }
+
+  .pdf-project-cat {
+    background: #eef3e6;
+    color: #3f6b2f;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  .pdf-project-award {
+    background: #fbf1d6;
+    color: #8a6d1d;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  .pdf-project h3 {
+    font-size: 12pt;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .pdf-project p {
+    font-size: 9.5pt;
+    color: #333333;
+    margin-bottom: 6px;
+  }
+
+  .pdf-project-features {
+    font-size: 9.5pt;
+    color: #333333;
+    padding-left: 16px;
+    margin-bottom: 6px;
+  }
+
+  .pdf-project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .pdf-project-tags span {
+    font-size: 8.5pt;
+    background: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .pdf-project-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 8.5pt;
+    color: #555555;
+  }
+
+  .pdf-timeline-item {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+    page-break-inside: avoid;
+  }
+
+  .pdf-timeline-year {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: #3f6b2f;
+  }
+
+  .pdf-timeline-item h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+  }
+
+  .pdf-timeline-item h4 {
+    font-size: 9.5pt;
+    font-weight: 500;
+    color: #555555;
+    margin-bottom: 3px;
+  }
+
+  .pdf-timeline-item p {
+    font-size: 9.5pt;
+    color: #333333;
+  }
+
+  .pdf-social-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 9.5pt;
+    color: #333333;
+  }
+
+  .pdf-social-list li {
+    padding: 2px 0;
+  }
 }
 
 .footer-bottom-line {

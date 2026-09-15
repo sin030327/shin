@@ -413,8 +413,8 @@ document.addEventListener('DOMContentLoaded', () => {
     6: {
       vol: 'VOL. 06',
       cat: '조경 설계 공모전',
-      title: '노들섬 전통정원',
-      desc: '서울 노들섬을 대상지로, 유상곡수(流觴曲水)·화계(花階) 등 전통 조경 기법을 접목한 정원을 설계한 제2회 전통조경대전 출품작입니다. 팀 프로젝트로 참여해 마스터플랜 제작을 맡았으며, 장려상을 수상했습니다.',
+      title: '청도서원(淸道書院)',
+      desc: '서울 노들섬을 대상지로, 유상곡수(流觴曲水)·화계(花階) 등 전통 조경 기법을 접목한 정원을 설계한 대한민국 전통조경대전(제2회) 출품작 "청도서원"입니다. 팀 프로젝트로 참여해 마스터플랜 제작을 맡았으며, 장려상을 수상했습니다.',
       features: [
         '유상곡수·화계 등 전통 조경 기법 리서치 및 설계 적용',
         '전통 정자와 연못을 중심으로 한 공간 구성',
@@ -424,7 +424,11 @@ document.addEventListener('DOMContentLoaded', () => {
       tags: ['Photoshop', '마스터플랜', '팀 프로젝트', '전통 조경'],
       image: 'project-traditional-garden.jpg',
       github: null,
-      award: '장려상 · 제2회 전통조경대전'
+      award: '장려상 · 대한민국 전통조경대전 제2회',
+      links: [
+        { label: '출품 영상 보기', url: 'https://youtu.be/WI0e0YNzEpc', icon: 'fa-brands fa-youtube' },
+        { label: '공식 수상작 갤러리', url: 'https://khs.spectory.net/klandscape2/klandscape2/plagiary?bno=122&gno=2&page=2', icon: 'fa-solid fa-trophy' }
+      ]
     }
   };
 
@@ -462,6 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalTags = document.getElementById('modal-tags');
   const modalGithub = document.getElementById('modal-github');
   const modalFooter = document.getElementById('modal-footer');
+  const modalLinks = document.getElementById('modal-links');
   const modalAward = document.getElementById('modal-award');
 
   function openStoryModal(id) {
@@ -490,10 +495,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // GitHub 저장소가 있는 프로젝트만 링크 버튼을 보여줌 (디자인/공모전 프로젝트는 저장소가 없음)
     if (data.github) {
       modalGithub.href = data.github;
-      modalFooter.style.display = '';
+      modalGithub.style.display = '';
     } else {
-      modalFooter.style.display = 'none';
+      modalGithub.style.display = 'none';
     }
+
+    // 참고 링크(출품 영상, 공식 수상작 갤러리 등)가 있는 프로젝트만 버튼으로 표시
+    modalLinks.innerHTML = '';
+    if (data.links && data.links.length) {
+      data.links.forEach(link => {
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'santioni-btn btn-outlined';
+        a.innerHTML = `<i class="${link.icon}"></i> ${link.label}`;
+        modalLinks.appendChild(a);
+      });
+    }
+
+    const hasGithub = !!data.github;
+    const hasLinks = !!(data.links && data.links.length);
+    modalFooter.style.display = (hasGithub || hasLinks) ? '' : 'none';
 
     // 수상 내역이 있는 프로젝트만 배지를 보여줌
     if (data.award) {

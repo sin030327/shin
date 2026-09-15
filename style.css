@@ -1616,7 +1616,15 @@ button, input, textarea {
   padding-top: 20px;
   border-top: 1px solid var(--border-line);
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: flex-end;
+}
+
+.m-modal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 /* --------------------------------------------------

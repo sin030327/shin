@@ -1047,23 +1047,50 @@ button, input, textarea {
 }
 
 /* --------------------------------------------------
-   11. Scene 04: Featured Stories (Projects)
+   11. Scene 04: Projects (Simple Card + Modal Design)
    -------------------------------------------------- */
+.projects-header {
+  margin-bottom: 36px;
+}
+
+.projects-eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 3px;
+  color: var(--accent-crimson);
+  margin-bottom: 10px;
+}
+
+.projects-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: var(--text-pure);
+  line-height: 1.2;
+}
+
+.projects-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
 .editorial-filters {
   display: flex;
-  gap: 12px;
-  margin-bottom: 40px;
+  gap: 10px;
+  margin-bottom: 36px;
   flex-wrap: wrap;
 }
 
 .ed-filter-btn {
-  padding: 8px 20px;
+  padding: 9px 18px;
+  border-radius: 999px;
   border: 1px solid var(--border-line);
   background: var(--bg-panel);
   color: var(--text-secondary);
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 1.5px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
@@ -1078,72 +1105,42 @@ button, input, textarea {
 .stories-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 32px;
+  gap: 24px;
 }
 
+/* Simple, flat project card: whole card is one clear clickable unit */
 .story-card {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: 16px;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .story-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
   border-color: var(--accent-crimson);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-}
-
-.story-header-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--border-line);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 1.5px;
-}
-
-.vol-tag {
-  color: var(--accent-crimson);
-  font-weight: 700;
-}
-
-.status-tag {
-  color: var(--text-muted);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
 .story-visual {
-  height: 180px;
-  background: var(--bg-deep);
-  position: relative;
-  overflow: hidden;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.visual-1 { background: linear-gradient(135deg, #1b1212 0%, #2a1515 100%); }
-.visual-2 { background: linear-gradient(135deg, #121815 0%, #15291e 100%); }
-.visual-3 { background: linear-gradient(135deg, #15121b 0%, #20172c 100%); }
-.visual-4 { background: linear-gradient(135deg, #1c1811 0%, #2e2416 100%); }
-
-.visual-inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+.visual-1,
+.visual-2,
+.visual-3,
+.visual-4 {
+  background: var(--bg-panel-sub);
 }
 
 .story-icon {
-  font-size: 3.5rem;
-  color: rgba(255, 255, 255, 0.2);
-  transition: transform var(--transition-smooth), color var(--transition-smooth);
-}
-
-.story-card:hover .story-icon {
-  transform: scale(1.15) rotate(4deg);
+  font-size: 2.6rem;
   color: var(--accent-crimson);
 }
 
@@ -1152,6 +1149,18 @@ button, input, textarea {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+.story-category-tag {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 4px 12px;
+  margin-bottom: 12px;
+  border-radius: 999px;
+  background: var(--accent-crimson-glow);
+  color: var(--accent-crimson-bright);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .story-title {
@@ -1179,12 +1188,11 @@ button, input, textarea {
 }
 
 .story-tags span {
-  padding: 3px 8px;
-  border: 1px solid var(--border-line);
+  padding: 4px 10px;
+  border-radius: 999px;
   background: var(--bg-deep);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-primary);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
 }
 
 .story-actions {
@@ -1199,10 +1207,9 @@ button, input, textarea {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
   font-weight: 700;
-  letter-spacing: 1.5px;
   color: var(--accent-crimson);
   cursor: pointer;
   transition: gap var(--transition-fast), color var(--transition-fast);
@@ -1210,12 +1217,13 @@ button, input, textarea {
 
 .santioni-action-btn:hover {
   gap: 12px;
-  color: #ffffff;
+  color: var(--accent-crimson-bright);
 }
 
 .story-link-icon {
   width: 34px;
   height: 34px;
+  border-radius: 50%;
   border: 1px solid var(--border-line);
   display: flex;
   align-items: center;
@@ -1466,12 +1474,16 @@ button, input, textarea {
 }
 
 .story-modal-panel {
-  max-width: 680px;
+  max-width: 640px;
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
-  padding: 40px;
-  transform: scale(0.95);
+  padding: 36px;
+  border-radius: 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  transform: scale(0.97);
   transition: transform var(--transition-smooth);
 }
 
@@ -1485,6 +1497,7 @@ button, input, textarea {
   right: 20px;
   width: 36px;
   height: 36px;
+  border-radius: 50%;
   border: 1px solid var(--border-line);
   display: flex;
   align-items: center;
@@ -1502,15 +1515,20 @@ button, input, textarea {
 
 .m-modal-meta {
   display: flex;
-  gap: 12px;
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.m-vol { color: var(--accent-crimson); font-weight: 700; }
-.m-cat { color: var(--text-muted); }
+.m-vol { color: var(--text-muted); font-size: 0.85rem; }
+.m-cat {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-crimson-glow);
+  color: var(--accent-crimson-bright);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
 
 .m-modal-title {
   font-family: var(--font-serif);
@@ -1529,9 +1547,8 @@ button, input, textarea {
 }
 
 .m-sec-title {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 1.5px;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--accent-crimson);
   margin-bottom: 8px;
 }
@@ -1557,11 +1574,10 @@ button, input, textarea {
 
 .m-sec-tags span {
   padding: 4px 10px;
-  border: 1px solid var(--border-line);
+  border-radius: 999px;
   background: var(--bg-deep);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-primary);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
 }
 
 .m-modal-footer {

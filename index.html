@@ -455,52 +455,35 @@
          -------------------------------------------------- -->
     <section class="scene scene-projects" id="projects">
       <div class="editorial-container">
-        <div class="scene-meta-header">
-          <div class="meta-left">
-            <span class="meta-num">[ SCENE 04 ]</span>
-            <span class="meta-label">FEATURED STORIES &bull; WORKS</span>
-          </div>
-          <div class="meta-right">
-            <span class="meta-dept">04 // 06</span>
-          </div>
+        <div class="projects-header">
+          <span class="projects-eyebrow">PROJECTS</span>
+          <h2 class="projects-title">프로젝트</h2>
+          <p class="projects-subtitle">직접 기획하고 개발한 주요 프로젝트입니다. 카드를 클릭하면 자세한 내용을 볼 수 있습니다.</p>
         </div>
 
-        <div class="section-title-wrapper">
-          <h2 class="editorial-title">CHRONICLES OF WORK</h2>
-          <p class="editorial-subtitle">아이디어를 현실로 구현해낸 주요 프로젝트 챕터</p>
-        </div>
-
-        <!-- Project Filter Buttons (Editorial Style) -->
+        <!-- Project Filter Buttons (Simple Chips) -->
         <div class="editorial-filters">
-          <button class="ed-filter-btn active" data-filter="all">ALL STORIES</button>
-          <button class="ed-filter-btn" data-filter="campus">CAMPUS DEV</button>
-          <button class="ed-filter-btn" data-filter="web">WEB APPLICATION</button>
-          <button class="ed-filter-btn" data-filter="study">LAB & RESEARCH</button>
+          <button class="ed-filter-btn active" data-filter="all">전체</button>
+          <button class="ed-filter-btn" data-filter="campus">캠퍼스 개발</button>
+          <button class="ed-filter-btn" data-filter="web">웹 애플리케이션</button>
+          <button class="ed-filter-btn" data-filter="study">학습 도구</button>
         </div>
 
         <!-- Stories Grid -->
         <div class="stories-grid">
           <!-- Story 01 -->
-          <article class="panel-box story-card" data-category="campus" data-id="1" data-tilt>
-            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
-            <div class="story-header-meta">
-              <span class="vol-tag">VOL. 01 // CAMPUS WEB</span>
-              <span class="status-tag">STABLE BUILD</span>
-            </div>
-            
+          <article class="story-card" data-category="campus" data-id="1">
             <div class="story-visual visual-1">
-              <div class="visual-inner">
-                <i class="fa-solid fa-graduation-cap story-icon"></i>
-                <div class="visual-noise"></div>
-              </div>
+              <i class="fa-solid fa-graduation-cap story-icon"></i>
             </div>
 
             <div class="story-content">
+              <span class="story-category-tag">캠퍼스 개발</span>
               <h3 class="story-title">상명대 스터디룸 예약 및 캘린더 플랫폼</h3>
               <p class="story-summary">
                 학생들의 교내 스터디룸 및 빈 강의실 예약 편의를 위해 개발된 실시간 타임테이블 예약 시스템입니다.
               </p>
-              
+
               <div class="story-tags">
                 <span>React</span>
                 <span>Node.js</span>
@@ -510,10 +493,10 @@
 
               <div class="story-actions">
                 <button class="santioni-action-btn btn-open-modal" data-project="1">
-                  <span>READ STORY</span>
+                  <span>자세히 보기</span>
                   <i class="fa-solid fa-arrow-right"></i>
                 </button>
-                <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="View Source on GitHub">
+                <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="GitHub에서 소스 보기">
                   <i class="fa-brands fa-github"></i>
                 </a>
               </div>
@@ -521,26 +504,18 @@
           </article>
 
           <!-- Story 02 -->
-          <article class="panel-box story-card" data-category="web" data-id="2" data-tilt>
-            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
-            <div class="story-header-meta">
-              <span class="vol-tag">VOL. 02 // DEV ARCHIVE</span>
-              <span class="status-tag">ACTIVE</span>
-            </div>
-            
+          <article class="story-card" data-category="web" data-id="2">
             <div class="story-visual visual-2">
-              <div class="visual-inner">
-                <i class="fa-solid fa-laptop-code story-icon"></i>
-                <div class="visual-noise"></div>
-              </div>
+              <i class="fa-solid fa-laptop-code story-icon"></i>
             </div>
 
             <div class="story-content">
+              <span class="story-category-tag">웹 애플리케이션</span>
               <h3 class="story-title">알고리즘 풀이 & 개발 지식 아카이빙 블로그</h3>
               <p class="story-summary">
                 마크다운 문법을 실시간 파싱하여 복잡한 알고리즘 풀이와 웹 기술 트러블슈팅을 체계적으로 축적하는 개인 블로그입니다.
               </p>
-              
+
               <div class="story-tags">
                 <span>JavaScript</span>
                 <span>HTML5 / CSS3</span>
@@ -550,10 +525,10 @@
 
               <div class="story-actions">
                 <button class="santioni-action-btn btn-open-modal" data-project="2">
-                  <span>READ STORY</span>
+                  <span>자세히 보기</span>
                   <i class="fa-solid fa-arrow-right"></i>
                 </button>
-                <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="View Source on GitHub">
+                <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="GitHub에서 소스 보기">
                   <i class="fa-brands fa-github"></i>
                 </a>
               </div>
@@ -561,26 +536,18 @@
           </article>
 
           <!-- Story 03 -->
-          <article class="panel-box story-card" data-category="study" data-id="3" data-tilt>
-            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
-            <div class="story-header-meta">
-              <span class="vol-tag">VOL. 03 // STUDY LAB</span>
-              <span class="status-tag">PROTOTYPE</span>
-            </div>
-            
+          <article class="story-card" data-category="study" data-id="3">
             <div class="story-visual visual-3">
-              <div class="visual-inner">
-                <i class="fa-solid fa-book-open-reader story-icon"></i>
-                <div class="visual-noise"></div>
-              </div>
+              <i class="fa-solid fa-book-open-reader story-icon"></i>
             </div>
 
             <div class="story-content">
+              <span class="story-category-tag">학습 도구</span>
               <h3 class="story-title">전공 강의 핵심 요약 및 퀴즈 생성 어시스턴트</h3>
               <p class="story-summary">
                 방대한 전공 시험 범위를 단시간에 복습할 수 있도록 핵심 용어를 추출하고 실시간 4지선다 퀴즈를 생성하는 학습 툴입니다.
               </p>
-              
+
               <div class="story-tags">
                 <span>Python</span>
                 <span>FastAPI</span>
@@ -590,10 +557,10 @@
 
               <div class="story-actions">
                 <button class="santioni-action-btn btn-open-modal" data-project="3">
-                  <span>READ STORY</span>
+                  <span>자세히 보기</span>
                   <i class="fa-solid fa-arrow-right"></i>
                 </button>
-                <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="View Source on GitHub">
+                <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="GitHub에서 소스 보기">
                   <i class="fa-brands fa-github"></i>
                 </a>
               </div>
@@ -601,26 +568,18 @@
           </article>
 
           <!-- Story 04 -->
-          <article class="panel-box story-card" data-category="web" data-id="4" data-tilt>
-            <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
-            <div class="story-header-meta">
-              <span class="vol-tag">VOL. 04 // PRODUCTIVITY</span>
-              <span class="status-tag">STABLE</span>
-            </div>
-            
+          <article class="story-card" data-category="web" data-id="4">
             <div class="story-visual visual-4">
-              <div class="visual-inner">
-                <i class="fa-solid fa-clock-rotate-left story-icon"></i>
-                <div class="visual-noise"></div>
-              </div>
+              <i class="fa-solid fa-clock-rotate-left story-icon"></i>
             </div>
 
             <div class="story-content">
+              <span class="story-category-tag">웹 애플리케이션</span>
               <h3 class="story-title">몰입형 집중 타이머 & 칸반 할 일 관리 보드</h3>
               <p class="story-summary">
                 뽀모도로 집중 기법과 드래그 앤 드롭 칸반을 결합하여 코딩 작업 및 공부 루틴을 체계적으로 관리하는 생산성 도구입니다.
               </p>
-              
+
               <div class="story-tags">
                 <span>Vanilla JS</span>
                 <span>Drag & Drop API</span>
@@ -630,10 +589,10 @@
 
               <div class="story-actions">
                 <button class="santioni-action-btn btn-open-modal" data-project="4">
-                  <span>READ STORY</span>
+                  <span>자세히 보기</span>
                   <i class="fa-solid fa-arrow-right"></i>
                 </button>
-                <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="View Source on GitHub">
+                <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="GitHub에서 소스 보기">
                   <i class="fa-brands fa-github"></i>
                 </a>
               </div>
@@ -820,9 +779,7 @@
        3. Project Story Modal (Cinematic Modal)
        ====================================================================== -->
   <div class="story-modal-overlay" id="story-modal" aria-hidden="true">
-    <div class="story-modal-panel panel-box">
-      <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
-      
+    <div class="story-modal-panel">
       <button class="modal-exit-btn" id="modal-exit-btn" aria-label="Close Story">
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -833,22 +790,22 @@
       </div>
 
       <h2 class="m-modal-title" id="modal-title">프로젝트 제목</h2>
-      
+
       <div class="m-modal-body">
         <div class="m-section">
-          <h4 class="m-sec-title">[ OVERVIEW ]</h4>
+          <h4 class="m-sec-title">개요</h4>
           <p class="m-sec-desc" id="modal-desc">상세 설명</p>
         </div>
 
         <div class="m-section">
-          <h4 class="m-sec-title">[ ARCHITECTURE & FEATURES ]</h4>
+          <h4 class="m-sec-title">주요 기능</h4>
           <ul class="m-sec-list" id="modal-features">
             <!-- Features dynamic -->
           </ul>
         </div>
 
         <div class="m-section">
-          <h4 class="m-sec-title">[ TECH STACK MATRIX ]</h4>
+          <h4 class="m-sec-title">기술 스택</h4>
           <div class="m-sec-tags" id="modal-tags">
             <!-- Tags dynamic -->
           </div>
@@ -857,7 +814,7 @@
 
       <div class="m-modal-footer">
         <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="santioni-btn btn-outlined" id="modal-github">
-          <i class="fa-brands fa-github"></i> GITHUB REPOSITORY
+          <i class="fa-brands fa-github"></i> GitHub 저장소 보기
         </a>
       </div>
     </div>

@@ -393,6 +393,38 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
       tags: ['Vanilla JS', 'Drag & Drop API', 'Web Audio API', 'CSS Grid'],
       github: 'https://github.com/sin030327/shin'
+    },
+    5: {
+      vol: 'VOL. 05',
+      cat: '조경 설계 공모전',
+      title: '습지를 담은 숲 — 도시숲 설계 공모전',
+      desc: '서울 용산구 이촌동, 용산공원과 한강 사이에서 끊어진 생태축을 회복하는 도시숲 설계 공모전 출품작입니다. 팀 프로젝트로 참여해 마스터플랜 제작을 맡았습니다.',
+      features: [
+        '용산공원-이촌-한강을 잇는 생태축 회복 콘셉트 설계',
+        '생태-완충-이용-체험-관리 순으로 이어지는 조닝 전략 수립',
+        '습지를 중심에 두고 숲을 조성하는 마스터플랜 제작',
+        '완충 식재대와 생태 탐방로 등 세부 공간 계획'
+      ],
+      tags: ['Photoshop', '마스터플랜', '팀 프로젝트', '생태 설계'],
+      image: 'project-urban-forest.jpg',
+      github: null,
+      award: null
+    },
+    6: {
+      vol: 'VOL. 06',
+      cat: '조경 설계 공모전',
+      title: '노들섬 전통정원',
+      desc: '서울 노들섬을 대상지로, 유상곡수(流觴曲水)·화계(花階) 등 전통 조경 기법을 접목한 정원을 설계한 제2회 전통조경대전 출품작입니다. 팀 프로젝트로 참여해 마스터플랜 제작을 맡았으며, 장려상을 수상했습니다.',
+      features: [
+        '유상곡수·화계 등 전통 조경 기법 리서치 및 설계 적용',
+        '전통 정자와 연못을 중심으로 한 공간 구성',
+        '대상지의 곡선형 부지를 살린 동선 계획',
+        '마스터플랜 제작'
+      ],
+      tags: ['Photoshop', '마스터플랜', '팀 프로젝트', '전통 조경'],
+      image: 'project-traditional-garden.jpg',
+      github: null,
+      award: '장려상 · 제2회 전통조경대전'
     }
   };
 
@@ -429,6 +461,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalFeatures = document.getElementById('modal-features');
   const modalTags = document.getElementById('modal-tags');
   const modalGithub = document.getElementById('modal-github');
+  const modalFooter = document.getElementById('modal-footer');
+  const modalAward = document.getElementById('modal-award');
 
   function openStoryModal(id) {
     const data = projectStories[id];
@@ -453,7 +487,21 @@ document.addEventListener('DOMContentLoaded', () => {
       modalTags.appendChild(span);
     });
 
-    modalGithub.href = data.github;
+    // GitHub 저장소가 있는 프로젝트만 링크 버튼을 보여줌 (디자인/공모전 프로젝트는 저장소가 없음)
+    if (data.github) {
+      modalGithub.href = data.github;
+      modalFooter.style.display = '';
+    } else {
+      modalFooter.style.display = 'none';
+    }
+
+    // 수상 내역이 있는 프로젝트만 배지를 보여줌
+    if (data.award) {
+      modalAward.textContent = `🏆 ${data.award}`;
+      modalAward.style.display = '';
+    } else {
+      modalAward.style.display = 'none';
+    }
 
     storyModal.classList.add('active');
     storyModal.setAttribute('aria-hidden', 'false');

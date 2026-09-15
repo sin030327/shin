@@ -467,6 +467,7 @@
           <button class="ed-filter-btn" data-filter="campus">캠퍼스 개발</button>
           <button class="ed-filter-btn" data-filter="web">웹 애플리케이션</button>
           <button class="ed-filter-btn" data-filter="study">학습 도구</button>
+          <button class="ed-filter-btn" data-filter="landscape">조경 설계</button>
         </div>
 
         <!-- Stories Grid -->
@@ -595,6 +596,65 @@
                 <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="story-link-icon" title="GitHub에서 소스 보기">
                   <i class="fa-brands fa-github"></i>
                 </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Story 05 -->
+          <article class="story-card" data-category="landscape" data-id="5">
+            <div class="story-visual">
+              <img src="project-urban-forest.jpg" alt="습지를 담은 숲 마스터플랜" loading="lazy">
+            </div>
+
+            <div class="story-content">
+              <span class="story-category-tag">조경 설계 공모전</span>
+              <h3 class="story-title">습지를 담은 숲 — 도시숲 설계 공모전</h3>
+              <p class="story-summary">
+                서울 용산구 이촌동, 용산공원과 한강 사이에서 끊어진 생태축을 회복하는 도시숲 설계 공모전 출품작입니다. 팀 프로젝트로 참여해 마스터플랜 제작을 맡았습니다.
+              </p>
+
+              <div class="story-tags">
+                <span>Photoshop</span>
+                <span>마스터플랜</span>
+                <span>팀 프로젝트</span>
+                <span>생태 설계</span>
+              </div>
+
+              <div class="story-actions">
+                <button class="santioni-action-btn btn-open-modal" data-project="5">
+                  <span>자세히 보기</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Story 06 -->
+          <article class="story-card" data-category="landscape" data-id="6">
+            <div class="story-visual">
+              <img src="project-traditional-garden.jpg" alt="노들섬 전통정원 마스터플랜" loading="lazy">
+            </div>
+
+            <div class="story-content">
+              <span class="story-category-tag">조경 설계 공모전</span>
+              <span class="story-award-badge">🏆 장려상 · 제2회 전통조경대전</span>
+              <h3 class="story-title">노들섬 전통정원</h3>
+              <p class="story-summary">
+                서울 노들섬을 대상지로, 유상곡수·화계 등 전통 조경 기법을 접목한 정원을 설계한 제2회 전통조경대전 출품작입니다. 팀 프로젝트로 참여해 마스터플랜 제작을 맡았습니다.
+              </p>
+
+              <div class="story-tags">
+                <span>Photoshop</span>
+                <span>마스터플랜</span>
+                <span>팀 프로젝트</span>
+                <span>전통 조경</span>
+              </div>
+
+              <div class="story-actions">
+                <button class="santioni-action-btn btn-open-modal" data-project="6">
+                  <span>자세히 보기</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
               </div>
             </div>
           </article>
@@ -790,6 +850,7 @@
       </div>
 
       <h2 class="m-modal-title" id="modal-title">프로젝트 제목</h2>
+      <span class="m-award-badge" id="modal-award" style="display:none;"></span>
 
       <div class="m-modal-body">
         <div class="m-section">
@@ -798,21 +859,21 @@
         </div>
 
         <div class="m-section">
-          <h4 class="m-sec-title">주요 기능</h4>
+          <h4 class="m-sec-title">주요 내용</h4>
           <ul class="m-sec-list" id="modal-features">
             <!-- Features dynamic -->
           </ul>
         </div>
 
         <div class="m-section">
-          <h4 class="m-sec-title">기술 스택</h4>
+          <h4 class="m-sec-title">사용 도구</h4>
           <div class="m-sec-tags" id="modal-tags">
             <!-- Tags dynamic -->
           </div>
         </div>
       </div>
 
-      <div class="m-modal-footer">
+      <div class="m-modal-footer" id="modal-footer">
         <a href="https://github.com/sin030327/shin" target="_blank" rel="noopener noreferrer" class="santioni-btn btn-outlined" id="modal-github">
           <i class="fa-brands fa-github"></i> GitHub 저장소 보기
         </a>

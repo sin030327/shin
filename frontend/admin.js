@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const newBtn = document.getElementById('admin-new-btn');
   const deleteBtn = document.getElementById('admin-delete-btn');
   const toastEl = document.getElementById('admin-toast');
+  const duplicateBanner = document.getElementById('admin-duplicate-banner');
 
   const fTitle = document.getElementById('f-title');
   const fRole = document.getElementById('f-role');
@@ -154,6 +155,103 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       li.addEventListener('click', () => loadIntoForm(p));
       listEl.appendChild(li);
+    });
+
+    renderDuplicateWarning();
+  }
+
+  // -----------------------------------------------------------------------
+  // 중복 프로젝트 확인
+  // 제목을 소문자/공백/특수문자 제거로 다듬어서 똑같거나 한쪽이 다른 쪽을
+  // 포함하면 "중복일 수 있음"으로 묶는다. 정교한 유사도 계산 없이 문자열
+  // 비교만으로 판단하기 때문에 로직이 간단하다 — 완벽하진 않아도 충분하다.
+  // -----------------------------------------------------------------------
+  function normalizeTitle(title) {
+    return String(title || '')
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/[^\p{L}\p{N}]/gu, '');
+  }
+
+  function findDuplicateGroups(projects) {
+    const groups = [];
+    const used = new Set();
+
+    for (let i = 0; i < projects.length; i++) {
+      if (used.has(projects[i].id)) continue;
+      const a = normalizeTitle(projects[i].title);
+      if (!a) continue;
+
+      const group = [projects[i]];
+      for (let j = i + 1; j < projects.length; j++) {
+        if (used.has(projects[j].id)) continue;
+        const b = normalizeTitle(projects[j].title);
+        if (!b) continue;
+
+        const isSameTitle = a === b;
+        const oneContainsOther = (a.includes(b) || b.includes(a)) && Math.min(a.length, b.length) >= 4;
+
+        if (isSameTitle || oneContainsOther) {
+          group.push(projects[j]);
+          used.add(projects[j].id);
+        }
+      }
+
+      if (group.length > 1) {
+        used.add(projects[i].id);
+        groups.push(group);
+      }
+    }
+
+    return groups;
+  }
+
+  function renderDuplicateWarning() {
+    const groups = findDuplicateGroups(cachedProjects);
+
+    if (!groups.length) {
+      duplicateBanner.hidden = true;
+      duplicateBanner.innerHTML = '';
+      return;
+    }
+
+    duplicateBanner.hidden = false;
+    duplicateBanner.innerHTML = `<h3><i class="fa-solid fa-triangle-exclamation"></i> 제목이 비슷한 프로젝트가 ${groups.length}건 있습니다. 하나를 열어서 확인하거나 중복분을 삭제하세요.</h3>`;
+
+    groups.forEach((group) => {
+      const groupEl = document.createElement('div');
+      groupEl.className = 'admin-dup-group';
+      groupEl.innerHTML = group.map((p) => `
+        <div class="admin-dup-item">
+          <span class="admin-status-badge ${p.status === 'published' ? 'published' : 'draft'}">${p.status === 'published' ? '공개' : '초안'}</span>
+          <span class="admin-dup-title">${escapeHtml(p.title) || '(제목 없음)'}</span>
+          <button type="button" class="admin-btn admin-btn-sm admin-btn-ghost" data-open="${p.id}">열어서 확인</button>
+          <button type="button" class="admin-btn admin-btn-sm admin-btn-ghost" data-delete="${p.id}">이것 삭제</button>
+        </div>
+      `).join('');
+      duplicateBanner.appendChild(groupEl);
+    });
+
+    // 매번 새로 그리기 때문에 이벤트도 그때그때 다시 걸어준다 (이전 리스너는 DOM과 함께 사라짐)
+    duplicateBanner.querySelectorAll('[data-open]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const p = cachedProjects.find((x) => x.id === btn.dataset.open);
+        if (p) loadIntoForm(p);
+      });
+    });
+
+    duplicateBanner.querySelectorAll('[data-delete]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('이 프로젝트를 삭제할까요? 되돌릴 수 없습니다.')) return;
+        try {
+          await api(`/api/admin/projects/${btn.dataset.delete}`, { method: 'DELETE' });
+          showToast('삭제되었습니다.');
+          if (currentEditingId === btn.dataset.delete) resetForm();
+          await loadProjects();
+        } catch (err) {
+          showToast(err.message);
+        }
+      });
     });
   }
 

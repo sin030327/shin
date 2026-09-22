@@ -146,6 +146,49 @@
   align-items: flex-start;
 }
 
+/* 중복 프로젝트 의심 경고 배너 */
+.admin-duplicate-banner {
+  max-width: 1200px;
+  margin: 0 auto 20px;
+  padding: 16px 20px;
+  border: 1px solid #b58a2e;
+  background: rgba(230, 196, 90, 0.08);
+  border-radius: 14px;
+}
+
+.admin-duplicate-banner h3 {
+  font-size: 0.92rem;
+  color: #e6c45a;
+  margin-bottom: 10px;
+}
+
+.admin-dup-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.admin-dup-group + .admin-dup-group {
+  border-top: 1px solid var(--border-line);
+}
+
+.admin-dup-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--bg-input);
+}
+
+.admin-dup-title {
+  font-size: 0.86rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
 /* 목록 패널 */
 .admin-list-panel {
   background: var(--bg-panel);

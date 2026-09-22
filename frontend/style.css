@@ -7,19 +7,23 @@
    1. Design Tokens & Variables
    -------------------------------------------------- */
 :root {
-  /* Forest, moss, stone and earth palette */
-  --bg-noir: #14231d;
-  --bg-deep: #0b1712;
-  --bg-panel: #1c3027;
-  --bg-panel-sub: #243b30;
-  --bg-input: #17291f;
+  /* 초록에 치우치지 않는 중립적인 네이비-차콜 배경 (포켓덱스 화면 톤) */
+  --bg-noir: #171a24;
+  --bg-deep: #0c0e15;
+  --bg-panel: #202531;
+  --bg-panel-sub: #2a3040;
+  --bg-input: #1a1e29;
 
-  /* 비비드한 레트로 게임 그린 + 골드 포인트 */
-  --accent-crimson: #4ad335;
-  --accent-crimson-bright: #9dff5c;
-  --accent-crimson-glow: rgba(74, 211, 53, 0.35);
-  --accent-gold: #ffce00;
-  --pixel-ink: #182b12;
+  /* 포켓몬 세계관을 연상시키는 멀티 컬러: 골드(기본 텍스트/링크), 레드(버튼), 블루(태그) */
+  --accent-crimson: #ffce00;
+  --accent-crimson-bright: #fff176;
+  --accent-crimson-glow: rgba(255, 206, 0, 0.28);
+  --accent-red: #ee3b3b;
+  --accent-red-bright: #ff6b6b;
+  --accent-blue: #3b82f6;
+  --accent-blue-bright: #7fb0ff;
+  --accent-blue-glow: rgba(59, 130, 246, 0.28);
+  --pixel-ink: #14161d;
 
   /* Typography Colors */
   --text-pure: #ffffff;
@@ -30,7 +34,7 @@
   /* Borders & Ornaments */
   --border-line: rgba(255, 255, 255, 0.12);
   --border-line-light: rgba(255, 255, 255, 0.22);
-  --border-crimson: #4ad335;
+  --border-crimson: #ffce00;
 
   /* Typography Families */
   --font-serif: 'Cormorant Garamond', 'Noto Serif KR', serif;
@@ -750,12 +754,13 @@ button, input, textarea {
 }
 
 .btn-filled {
-  background: var(--accent-crimson);
-  color: var(--pixel-ink);
+  background: var(--accent-red);
+  color: #ffffff;
 }
 
 .btn-filled:hover {
-  background: var(--accent-gold);
+  background: var(--accent-crimson);
+  color: var(--pixel-ink);
 }
 
 .btn-outlined {
@@ -1125,15 +1130,10 @@ button, input, textarea {
   image-rendering: pixelated;
 }
 
+/* 초록 → 노랑 → 빨강으로 이어지는 게임 체력 게이지 색감 */
 .m-fill {
   height: 100%;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--accent-crimson) 0,
-    var(--accent-crimson) 6px,
-    var(--accent-crimson-bright) 6px,
-    var(--accent-crimson-bright) 8px
-  );
+  background: linear-gradient(90deg, #4caf50, #ffce00, #ee3b3b);
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -1256,8 +1256,8 @@ button, input, textarea {
   padding: 4px 12px;
   margin-bottom: 12px;
   border-radius: 999px;
-  background: var(--accent-crimson-glow);
-  color: var(--accent-crimson-bright);
+  background: var(--accent-blue-glow);
+  color: var(--accent-blue-bright);
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -1636,8 +1636,8 @@ button, input, textarea {
 .m-cat {
   padding: 4px 12px;
   border-radius: 999px;
-  background: var(--accent-crimson-glow);
-  color: var(--accent-crimson-bright);
+  background: var(--accent-blue-glow);
+  color: var(--accent-blue-bright);
   font-size: 0.78rem;
   font-weight: 700;
 }

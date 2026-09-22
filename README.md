@@ -1,59 +1,34 @@
-# 신재훈 | Portfolio
+# 신재훈 | Portfolio (Monorepo)
 
-Santioni Spirits 스타일에서 영감을 받은 시네마틱 개인 포트폴리오 (정적 사이트).
+프론트엔드와 백엔드를 분리한 구조입니다. 현재 배포된 사이트는 `frontend/`만으로도
+완전히 동작하는 정적 사이트이며, `backend/`는 연락처 폼 등을 위한 API 서버로 아직
+실제 데이터베이스는 연결되어 있지 않은 초기 뼈대입니다.
 
-## 구성
-
-| 파일 | 설명 |
-| --- | --- |
-| `index.html` | 페이지 마크업 |
-| `style.css` | 스타일 |
-| `script.js` | 인터랙션 (패스코드 게이트, 타이핑, 모달 등) |
-| `profile.jpg` | 프로필 이미지 (웹용 1400px, ~220KB) |
-| `vercel.json` | 배포 설정 (보안 헤더, cleanUrls) |
-
-빌드 과정이 없는 순수 정적 사이트입니다.
-
-## 로컬 미리보기
-
-```bash
-# 방법 1: 파일을 브라우저로 직접 열기
-start index.html
-
-# 방법 2: 간단한 로컬 서버 (Python)
-python -m http.server 8000
-# http://localhost:8000
+```
+portfolio/
+├── frontend/   # 정적 포트폴리오 사이트 (Vercel 배포 대상)
+└── backend/    # Node.js + Express API 서버 (로컬 개발/향후 배포용, DB 미연결)
 ```
 
-## 배포 (Vercel)
-
-빌드 명령 없이 루트 디렉터리를 그대로 서빙합니다.
-
-### GitHub 연동 방식 (권장 — push 하면 자동 재배포)
-
-1. GitHub에서 새 저장소 생성 (예: `portfolio`).
-2. 로컬 저장소에 원격 추가 후 push:
-   ```bash
-   git remote add origin https://github.com/<사용자명>/portfolio.git
-   git push -u origin main
-   ```
-3. https://vercel.com/new 접속 → GitHub 계정 연결 → `portfolio` 저장소 Import.
-4. Framework Preset = **Other**, Build Command 비움, Output Directory 비움 → **Deploy**.
-5. 배포 완료 후 `https://portfolio-<해시>.vercel.app` 주소 발급. 이후 `main`에 push할 때마다 자동 재배포.
-
-### Vercel CLI 방식 (Node.js 필요)
+## 빠른 시작
 
 ```bash
-npm i -g vercel
-vercel        # 미리보기 배포
-vercel --prod # 프로덕션 배포
+# 프론트엔드만 보기 (백엔드 없이도 정상 동작)
+cd frontend
+start index.html      # 또는: python -m http.server 8000
+
+# 백엔드까지 함께 실행하고 싶다면 (연락처 폼이 실제로 저장됨)
+cd backend
+npm install
+cp .env.example .env
+npm start
 ```
 
-### 커스텀 도메인
+각 폴더의 자세한 내용은 [frontend/README.md](frontend/README.md), [backend/README.md](backend/README.md)를 참고하세요.
 
-Vercel 프로젝트 → Settings → Domains 에서 도메인 추가 후 안내되는 DNS 레코드를 등록.
+## 왜 나눴나요
 
-## 참고
-
-- 패스코드 게이트(`1234`)는 클라이언트 측 연출용이며 실제 접근 제어가 아닙니다.
-- 폰트/아이콘은 Google Fonts, jsDelivr, cdnjs CDN에서 로드합니다.
+- `frontend/`는 지금처럼 Vercel에 정적 사이트로 계속 배포합니다 (빌드 과정 없음).
+- `backend/`는 나중에 데이터베이스(연락처 메시지 저장 등)나 다른 프로그램을 연결할
+  자리로 미리 분리해 둔 것입니다. 지금 당장 DB가 없어도 프론트엔드는 그대로
+  동작하고, 백엔드가 켜져 있을 때만 실제로 데이터가 저장됩니다.

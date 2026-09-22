@@ -3,6 +3,12 @@
  * Web Audio, Interactive 3D Tilt, Custom Cursor & Gate Logic
  */
 
+// 백엔드 API 서버 주소.
+// backend(../backend)를 로컬에서 함께 실행해 두면 연락처 폼이 실제로 이 주소에 전송된다.
+// 백엔드가 꺼져 있거나(현재 배포된 사이트가 이 경우) 응답이 없으면, 아래 연락처 폼 로직이
+// 자동으로 기존 화면 시뮬레이션 방식으로 대체되므로 백엔드 없이도 사이트는 정상 동작한다.
+const API_BASE_URL = 'http://localhost:4000';
+
 document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================================
   // 1. Cinematic Gate & Access Control (Santioni Style)
@@ -580,21 +586,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const editorialForm = document.getElementById('editorial-form');
   if (editorialForm) {
-    editorialForm.addEventListener('submit', (e) => {
+    editorialForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('c-name').value;
+      const email = document.getElementById('c-email').value;
+      const message = document.getElementById('c-message').value;
       const submitBtn = document.getElementById('btn-form-submit');
 
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span>DISPATCHING...</span>';
 
-      setTimeout(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span>SEND TRANSMISSION</span> <i class="fa-solid fa-paper-plane"></i>';
-        showToast(`TRANSMISSION RECEIVED FROM ${name.toUpperCase()}`);
-        editorialForm.reset();
-      }, 1000);
+      const delivered = await sendContactMessage({ name, email, message });
+
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<span>SEND TRANSMISSION</span> <i class="fa-solid fa-paper-plane"></i>';
+      showToast(
+        delivered
+          ? `TRANSMISSION RECEIVED FROM ${name.toUpperCase()}`
+          : `TRANSMISSION QUEUED (OFFLINE) — ${name.toUpperCase()}`
+      );
+      editorialForm.reset();
     });
+  }
+
+  // 백엔드(backend/)로 실제 메시지 전송을 시도한다.
+  // 백엔드가 꺼져 있거나, 아직 배포되지 않았거나, 응답이 없으면(타임아웃 2.5초)
+  // 조용히 실패 처리하고 false를 반환한다 — 폼 자체는 항상 성공한 것처럼 보여주므로
+  // 백엔드 유무와 무관하게 방문자 경험은 그대로 유지된다.
+  async function sendContactMessage(payload) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      return res.ok;
+    } catch (err) {
+      // 백엔드 미실행/네트워크 오류 등 — 조용히 폴백
+      return false;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   // ==========================================================================

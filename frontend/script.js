@@ -439,8 +439,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Filter Logic
+  // 카드 목록은 매 클릭마다 새로 조회한다 — 관리자 페이지에서 등록한 프로젝트가
+  // 나중에 동적으로 추가되어도(아래 11번 섹션) 필터가 그 카드까지 함께 처리하도록.
   const filterBtns = document.querySelectorAll('.ed-filter-btn');
-  const storyCards = document.querySelectorAll('.story-card');
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -448,6 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
 
       const filter = btn.getAttribute('data-filter');
+      const storyCards = document.querySelectorAll('.story-card');
 
       storyCards.forEach(card => {
         const cat = card.getAttribute('data-category');
@@ -492,11 +494,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     modalTags.innerHTML = '';
-    data.tags.forEach(t => {
+    (data.tags || []).forEach(t => {
       const span = document.createElement('span');
       span.textContent = t;
       modalTags.appendChild(span);
     });
+
+    // 태그가 없는 프로젝트(예: 관리자 페이지에서 등록한 항목)는 "사용 도구" 섹션 자체를 숨김
+    const modalTagsSection = document.getElementById('modal-tags-section');
+    if (modalTagsSection) {
+      modalTagsSection.style.display = (data.tags && data.tags.length) ? '' : 'none';
+    }
 
     // GitHub 저장소가 있는 프로젝트만 링크 버튼을 보여줌 (디자인/공모전 프로젝트는 저장소가 없음)
     if (data.github) {
@@ -543,12 +551,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = '';
   }
 
-  document.querySelectorAll('.btn-open-modal').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const id = btn.getAttribute('data-project');
-      openStoryModal(id);
-    });
+  // 이벤트 위임 방식으로 바인딩 — 관리자 페이지에서 등록한 프로젝트 카드가
+  // 나중에 동적으로 추가되어도(아래 11번 섹션) 별도 처리 없이 그대로 동작한다.
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-open-modal');
+    if (!btn) return;
+    e.stopPropagation();
+    const id = btn.getAttribute('data-project');
+    openStoryModal(id);
   });
 
   if (modalExitBtn) {
@@ -864,5 +874,80 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     doc.innerHTML = html;
+  }
+
+  // ==========================================================================
+  // 11. Admin-managed Projects (backend/admin.html에서 등록한 프로젝트)
+  // ==========================================================================
+  // 공개(published) 상태인 프로젝트만 백엔드가 내려준다. 백엔드가 꺼져 있거나
+  // 아직 배포되지 않은 경우(현재 상태)에는 조용히 실패하고 기존 카드만 보여준다.
+  loadAdminManagedProjects();
+
+  function escapeHtmlText(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  async function loadAdminManagedProjects() {
+    const grid = document.querySelector('.stories-grid');
+    if (!grid) return;
+
+    let items = [];
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/projects`);
+      if (!res.ok) return;
+      items = await res.json();
+    } catch (err) {
+      return; // 백엔드 미실행/네트워크 오류 — 조용히 폴백 (기존 카드만 표시)
+    }
+
+    items.forEach((p) => {
+      const cardId = `admin-${p.id}`;
+
+      // 모달/필터가 기존 카드와 동일한 방식으로 다루도록 projectStories에 그대로 편입
+      projectStories[cardId] = {
+        vol: '',
+        cat: p.role || '프로젝트',
+        title: p.title,
+        desc: p.description,
+        features: [
+          p.date ? `날짜: ${p.date}` : null,
+          p.teamSize ? `참여인원 수: ${p.teamSize}명` : null,
+          p.notes ? `참고사항: ${p.notes}` : null
+        ].filter(Boolean),
+        tags: [],
+        github: null,
+        award: null,
+        links: []
+      };
+
+      const article = document.createElement('article');
+      article.className = 'story-card';
+      article.dataset.category = 'admin';
+      article.dataset.id = cardId;
+      article.innerHTML = `
+        <div class="story-visual visual-admin">
+          <i class="fa-solid fa-folder-open story-icon"></i>
+        </div>
+        <div class="story-content">
+          <span class="story-category-tag">${escapeHtmlText(p.role) || '프로젝트'}</span>
+          <h3 class="story-title">${escapeHtmlText(p.title)}</h3>
+          <p class="story-summary">${escapeHtmlText(p.description)}</p>
+          <div class="story-tags">
+            ${p.date ? `<span>${escapeHtmlText(p.date)}</span>` : ''}
+            ${p.teamSize ? `<span>${escapeHtmlText(String(p.teamSize))}명 참여</span>` : ''}
+          </div>
+          <div class="story-actions">
+            <button class="santioni-action-btn btn-open-modal" data-project="${cardId}">
+              <span>자세히 보기</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(article);
+    });
   }
 });

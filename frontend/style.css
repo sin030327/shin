@@ -1192,7 +1192,8 @@ button, input, textarea {
 .visual-1,
 .visual-2,
 .visual-3,
-.visual-4 {
+.visual-4,
+.visual-admin {
   background: var(--bg-panel-sub);
 }
 

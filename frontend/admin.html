@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 | 신재훈 포트폴리오</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- style.css의 색상/폰트 변수(:root)를 재사용하고, admin.css에서 관리자 화면 전용 레이아웃만 별도로 정의 -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- 로그인 화면 -->
+  <div class="admin-login-view" id="admin-login-view">
+    <form class="admin-login-box" id="admin-login-form">
+      <span class="admin-login-eyebrow">ADMIN</span>
+      <h1>관리자 로그인</h1>
+      <p class="admin-login-sub">프로젝트를 관리하려면 비밀번호를 입력하세요.</p>
+      <input type="password" id="admin-password" placeholder="비밀번호" required autocomplete="current-password">
+      <button type="submit" class="admin-btn admin-btn-primary">로그인</button>
+      <p class="admin-login-error" id="admin-login-error" hidden></p>
+    </form>
+  </div>
+
+  <!-- 대시보드 화면 -->
+  <div class="admin-dashboard-view" id="admin-dashboard-view" hidden>
+    <header class="admin-header">
+      <h1>프로젝트 관리</h1>
+      <div class="admin-header-actions">
+        <a href="index.html" class="admin-btn admin-btn-ghost" target="_blank" rel="noopener noreferrer">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> 사이트 보기
+        </a>
+        <button class="admin-btn admin-btn-ghost" id="admin-logout-btn">
+          <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-layout">
+      <!-- 프로젝트 목록 -->
+      <section class="admin-list-panel">
+        <div class="admin-list-header">
+          <h2>프로젝트 목록</h2>
+          <button class="admin-btn admin-btn-primary admin-btn-sm" id="admin-new-btn">
+            <i class="fa-solid fa-plus"></i> 새 프로젝트
+          </button>
+        </div>
+        <ul class="admin-project-list" id="admin-project-list"></ul>
+        <p class="admin-empty-msg" id="admin-empty-msg" hidden>등록된 프로젝트가 없습니다. "새 프로젝트"로 시작해보세요.</p>
+      </section>
+
+      <!-- 등록/수정 폼 -->
+      <section class="admin-form-panel">
+        <h2 id="admin-form-title">새 프로젝트</h2>
+
+        <form id="admin-project-form" novalidate>
+          <div class="admin-field">
+            <label for="f-title">제목</label>
+            <input type="text" id="f-title" placeholder="예: 습지를 담은 숲 — 도시숲 설계 공모전">
+          </div>
+
+          <div class="admin-field">
+            <label for="f-role">내가 한 역할</label>
+            <input type="text" id="f-role" placeholder="예: 마스터플랜 제작 및 팀장">
+          </div>
+
+          <div class="admin-field">
+            <label for="f-description">설명</label>
+            <textarea id="f-description" rows="5" placeholder="예: 서울 용산구 이촌동을 대상지로, 끊어진 생태축을 회복하는 도시숲을 설계한 공모전 출품작입니다."></textarea>
+          </div>
+
+          <div class="admin-field-row">
+            <div class="admin-field">
+              <label for="f-date">날짜</label>
+              <input type="date" id="f-date">
+            </div>
+            <div class="admin-field">
+              <label for="f-team-size">참여인원 수</label>
+              <input type="number" id="f-team-size" min="1" placeholder="예: 4">
+            </div>
+          </div>
+
+          <div class="admin-field">
+            <label for="f-notes">참고사항 <span class="admin-optional-tag">(선택)</span></label>
+            <textarea id="f-notes" rows="3" placeholder="예: 장려상 수상, 참고 링크 등 추가로 남기고 싶은 내용"></textarea>
+          </div>
+
+          <div class="admin-field">
+            <label>공개 상태</label>
+            <div class="admin-status-toggle">
+              <label class="admin-radio">
+                <input type="radio" name="status" value="draft" checked>
+                <span>초안 <em>(나만 볼 수 있음, 빈칸 허용)</em></span>
+              </label>
+              <label class="admin-radio">
+                <input type="radio" name="status" value="published">
+                <span>공개 <em>(사이트에 표시됨, 참고사항 제외 전부 필수)</em></span>
+              </label>
+            </div>
+          </div>
+
+          <p class="admin-form-error" id="admin-form-error" hidden></p>
+
+          <div class="admin-form-actions">
+            <button type="button" class="admin-btn admin-btn-ghost" id="admin-delete-btn" hidden>
+              <i class="fa-solid fa-trash"></i> 삭제
+            </button>
+            <button type="submit" class="admin-btn admin-btn-primary" id="admin-save-btn">저장</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <div class="admin-toast" id="admin-toast" hidden></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

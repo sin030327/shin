@@ -1,0 +1,371 @@
+/* ==========================================================================
+   관리자 페이지 전용 스타일
+   :root 변수(색상/폰트)는 style.css를 그대로 재사용하고, 레이아웃만 여기서 정의한다.
+   ========================================================================== */
+
+.admin-body {
+  min-height: 100vh;
+  padding: 32px 24px;
+}
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border-line);
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.admin-btn:hover {
+  border-color: var(--accent-crimson);
+  color: var(--accent-crimson-bright);
+}
+
+.admin-btn-sm {
+  padding: 8px 14px;
+  font-size: 0.82rem;
+}
+
+.admin-btn-primary {
+  background: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+  color: #ffffff;
+}
+
+.admin-btn-primary:hover {
+  background: var(--accent-crimson-bright);
+  border-color: var(--accent-crimson-bright);
+  color: #ffffff;
+}
+
+.admin-btn-ghost {
+  background: transparent;
+}
+
+/* --------------------------------------------------
+   로그인 화면
+   -------------------------------------------------- */
+.admin-login-view {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-login-box {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: 16px;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-login-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  color: var(--accent-crimson);
+}
+
+.admin-login-box h1 {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-pure);
+}
+
+.admin-login-sub {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.admin-login-box input[type="password"] {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-line);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+
+.admin-login-box input[type="password"]:focus {
+  outline: none;
+  border-color: var(--accent-crimson);
+}
+
+.admin-login-error {
+  font-size: 0.85rem;
+  color: #e07a7a;
+}
+
+/* --------------------------------------------------
+   대시보드 화면
+   -------------------------------------------------- */
+.admin-header {
+  max-width: 1200px;
+  margin: 0 auto 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-header h1 {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-pure);
+}
+
+.admin-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* 목록 패널 */
+.admin-list-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.admin-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.admin-list-header h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-pure);
+}
+
+.admin-project-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.admin-project-row {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-line);
+  background: var(--bg-input);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.admin-project-row:hover {
+  border-color: var(--accent-crimson);
+}
+
+.admin-project-row.active {
+  border-color: var(--accent-crimson);
+  background: var(--bg-panel-sub);
+}
+
+.admin-project-row-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.admin-project-row-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-project-row-date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.admin-status-badge {
+  flex-shrink: 0;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.admin-status-badge.draft {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+}
+
+.admin-status-badge.published {
+  background: var(--accent-crimson-glow);
+  color: var(--accent-crimson-bright);
+}
+
+.admin-empty-msg {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 12px 4px;
+}
+
+/* 폼 패널 */
+.admin-form-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.admin-form-panel h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-pure);
+  margin-bottom: 20px;
+}
+
+.admin-field {
+  margin-bottom: 18px;
+}
+
+.admin-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.admin-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.admin-optional-tag {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.admin-field input[type="text"],
+.admin-field input[type="date"],
+.admin-field input[type="number"],
+.admin-field textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-line);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  resize: vertical;
+}
+
+/* 빈칸일 때 옅은 색으로 예시를 보여주고, 입력하면 사라지는 것은
+   input/textarea의 기본 placeholder 동작을 그대로 사용한다. */
+.admin-field input::placeholder,
+.admin-field textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.admin-field input:focus,
+.admin-field textarea:focus {
+  outline: none;
+  border-color: var(--accent-crimson);
+}
+
+.admin-status-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.admin-radio em {
+  font-style: normal;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.admin-form-error {
+  font-size: 0.85rem;
+  color: #e07a7a;
+  margin-bottom: 14px;
+}
+
+.admin-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* 토스트 */
+.admin-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--bg-panel);
+  border: 1px solid var(--accent-crimson);
+  color: var(--text-primary);
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  opacity: 0;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  z-index: 999;
+}
+
+.admin-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 860px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-field-row {
+    grid-template-columns: 1fr;
+  }
+}

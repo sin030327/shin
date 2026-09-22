@@ -2051,6 +2051,22 @@ button, input, textarea {
   color: var(--accent-crimson);
 }
 
+.footer-music-credit {
+  margin-top: 8px;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  opacity: 0.5;
+}
+
+.footer-music-credit a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.footer-music-credit a:hover {
+  color: var(--accent-crimson);
+}
+
 /* --------------------------------------------------
    17. Responsive Breakpoints
    -------------------------------------------------- */

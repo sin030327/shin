@@ -89,11 +89,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================================
   let audioCtx = null;
   let isSoundActive = false;
-  let ambientOscillators = [];
-  let ambientGainNode = null;
-
   const soundToggleBtn = document.getElementById('sound-toggle');
   const soundStatusText = document.getElementById('sound-status');
+
+  // 배경음악(bgm-audio, "Morning" by Kevin MacLeod)을 서서히 켜고 끄기 위한
+  // 페이드 인/아웃. setInterval로 볼륨만 조금씩 바꾸는 단순한 방식이다.
+  const BGM_VOLUME = 0.35;
+  const bgmAudio = document.getElementById('bgm-audio');
+  let bgmFadeTimer = null;
+
+  function fadeBgm(target, onDone) {
+    clearInterval(bgmFadeTimer);
+    bgmFadeTimer = setInterval(() => {
+      const step = target > bgmAudio.volume ? 0.02 : -0.02;
+      const next = bgmAudio.volume + step;
+
+      if ((step > 0 && next >= target) || (step < 0 && next <= target)) {
+        bgmAudio.volume = target;
+        clearInterval(bgmFadeTimer);
+        if (onDone) onDone();
+      } else {
+        bgmAudio.volume = next;
+      }
+    }, 80);
+  }
 
   function initAudioContext() {
     if (!audioCtx) {
@@ -107,34 +126,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function startAmbience() {
     initAudioContext();
-    if (ambientOscillators.length > 0) return;
+    if (!bgmAudio) return;
 
-    ambientGainNode = audioCtx.createGain();
-    ambientGainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
-    ambientGainNode.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + 3);
-    ambientGainNode.connect(audioCtx.destination);
-
-    // Ethereal chord frequencies (D minor / A / F)
-    const freqs = [146.83, 220.00, 261.63, 349.23];
-
-    freqs.forEach(freq => {
-      const osc = audioCtx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      osc.connect(ambientGainNode);
-      osc.start();
-      ambientOscillators.push(osc);
+    bgmAudio.volume = 0;
+    bgmAudio.play().catch(() => {
+      // 브라우저의 자동재생 정책으로 막힐 수 있음 — 사용자가 버튼을 눌러 시작한
+      // 경우이므로 대부분 통과되지만, 실패해도 조용히 무시한다.
     });
+    fadeBgm(BGM_VOLUME);
   }
 
   function stopAmbience() {
-    if (ambientGainNode && audioCtx) {
-      ambientGainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
-      setTimeout(() => {
-        ambientOscillators.forEach(osc => osc.stop());
-        ambientOscillators = [];
-      }, 1000);
-    }
+    if (!bgmAudio) return;
+    fadeBgm(0, () => bgmAudio.pause());
   }
 
   function playUiClickSound() {

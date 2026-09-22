@@ -14,10 +14,12 @@
   --bg-panel-sub: #243b30;
   --bg-input: #17291f;
 
-  /* Moss and clay accents */
-  --accent-crimson: #b7c96b;
-  --accent-crimson-bright: #d7df8d;
-  --accent-crimson-glow: rgba(183, 201, 107, 0.3);
+  /* 비비드한 레트로 게임 그린 + 골드 포인트 */
+  --accent-crimson: #4ad335;
+  --accent-crimson-bright: #9dff5c;
+  --accent-crimson-glow: rgba(74, 211, 53, 0.35);
+  --accent-gold: #ffce00;
+  --pixel-ink: #182b12;
 
   /* Typography Colors */
   --text-pure: #ffffff;
@@ -28,7 +30,7 @@
   /* Borders & Ornaments */
   --border-line: rgba(255, 255, 255, 0.12);
   --border-line-light: rgba(255, 255, 255, 0.22);
-  --border-crimson: #b7c96b;
+  --border-crimson: #4ad335;
 
   /* Typography Families */
   --font-serif: 'Cormorant Garamond', 'Noto Serif KR', serif;
@@ -676,12 +678,13 @@ button, input, textarea {
 }
 
 .editorial-title {
-  font-family: var(--font-serif);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 800;
-  letter-spacing: 2px;
+  font-family: var(--font-pixel);
+  font-size: clamp(1.1rem, 2.6vw, 1.9rem);
+  font-weight: 400;
+  letter-spacing: 1px;
   color: var(--text-pure);
-  line-height: 1.2;
+  line-height: 1.7;
+  text-shadow: 3px 3px 0 var(--pixel-ink);
 }
 
 .editorial-subtitle {
@@ -721,44 +724,50 @@ button, input, textarea {
   border-bottom: 1px solid var(--border-line);
 }
 
-/* Editorial Buttons */
+/* Editorial Buttons — 레트로 게임 메뉴의 8비트 버튼처럼: 각진 모서리 +
+   두꺼운 테두리 + 딱딱한 오프셋 그림자. 누르면 그림자 속으로 파고드는
+   "눌림" 효과를 준다. */
 .santioni-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 13px 28px;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 2px;
+  padding: 13px 26px;
+  font-family: var(--font-pixel);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  border-radius: 0;
+  border: 3px solid var(--pixel-ink);
+  box-shadow: 4px 4px 0 var(--pixel-ink);
+  transition: transform 0.1s steps(2), box-shadow 0.1s steps(2);
   text-transform: uppercase;
+}
+
+.santioni-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--pixel-ink);
 }
 
 .btn-filled {
   background: var(--accent-crimson);
-  border: 1px solid var(--accent-crimson);
-  color: #ffffff;
+  color: var(--pixel-ink);
 }
 
 .btn-filled:hover {
-  background: #ffffff;
-  border-color: #ffffff;
-  color: #121212;
-  transform: translateY(-2px);
+  background: var(--accent-gold);
 }
 
 .btn-outlined {
-  border: 1px solid var(--border-line-light);
-  background: transparent;
+  border-color: var(--text-pure);
+  background: var(--bg-panel);
   color: var(--text-pure);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
 }
 
 .btn-outlined:hover {
   border-color: var(--accent-crimson);
   color: var(--accent-crimson);
-  transform: translateY(-2px);
 }
 
 /* --------------------------------------------------
@@ -793,10 +802,12 @@ button, input, textarea {
 }
 
 .title-subline {
-  font-size: clamp(1.4rem, 4vw, 3.6rem);
-  letter-spacing: 8px;
+  font-size: clamp(0.85rem, 2.6vw, 1.9rem);
+  letter-spacing: 3px;
   color: var(--accent-crimson);
-  font-family: var(--font-display);
+  font-family: var(--font-pixel);
+  text-shadow: 3px 3px 0 var(--pixel-ink);
+  line-height: 1.8;
 }
 
 .hero-split-grid {

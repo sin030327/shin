@@ -2037,6 +2037,20 @@ button, input, textarea {
   color: var(--text-muted);
 }
 
+/* 눈에 띄지 않게 저작권 문구 옆에 붙여둔 관리자 페이지 링크 */
+.footer-admin-link {
+  margin-left: 14px;
+  color: var(--text-muted);
+  opacity: 0.55;
+  text-decoration: none;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+}
+
+.footer-admin-link:hover {
+  opacity: 1;
+  color: var(--accent-crimson);
+}
+
 /* --------------------------------------------------
    17. Responsive Breakpoints
    -------------------------------------------------- */

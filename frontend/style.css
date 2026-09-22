@@ -35,6 +35,8 @@
   --font-display: 'Manrope', 'Pretendard', sans-serif;
   --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Outfit', monospace, sans-serif;
+  /* 8비트 레트로 게임 느낌의 포인트 전용 폰트 — 짧은 배지/라벨에만 아껴서 사용 */
+  --font-pixel: 'Press Start 2P', var(--font-mono);
 
   --nav-height: 70px;
   --transition-fast: 0.2s cubic-bezier(0.25, 1, 0.5, 1);
@@ -221,11 +223,11 @@ button, input, textarea {
 
 .corner {
   position: absolute;
-  font-family: var(--font-mono);
-  font-size: 1.2rem;
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
   color: var(--text-muted);
   line-height: 1;
-  font-weight: 300;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
 }
 .corner.tl { top: 0; left: 0; }
 .corner.tr { top: 0; right: 0; }
@@ -430,9 +432,17 @@ button, input, textarea {
   color: var(--text-pure);
 }
 
+/* 도트(픽셀) 아트 새싹 아이콘 — 8x8 그리드를 그대로 각지게 렌더링 */
+.brand-pixel-icon {
+  fill: var(--accent-crimson);
+  shape-rendering: crispEdges;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
 .brand-tag {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
   color: var(--accent-crimson);
 }
 
@@ -443,10 +453,10 @@ button, input, textarea {
 }
 
 .nav-item {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
   font-weight: 600;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   color: var(--text-secondary);
   position: relative;
   padding: 4px 2px;
@@ -617,9 +627,9 @@ button, input, textarea {
 }
 
 .sound-text {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 1.5px;
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  letter-spacing: 1px;
   color: var(--text-secondary);
 }
 
@@ -655,6 +665,8 @@ button, input, textarea {
 }
 
 .meta-num {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
   color: var(--accent-crimson);
   margin-right: 8px;
 }
@@ -1085,21 +1097,32 @@ button, input, textarea {
 }
 
 .m-val {
+  font-family: var(--font-pixel);
+  font-size: 0.62rem;
   color: var(--accent-crimson);
   font-weight: 700;
 }
 
+/* 스킬 게이지를 레트로 게임의 체력(HP) 바처럼 표현 */
 .m-bar {
   width: 100%;
-  height: 4px;
+  height: 10px;
   background: var(--bg-deep);
-  border: 1px solid var(--border-line);
+  border: 2px solid #000;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
   position: relative;
+  image-rendering: pixelated;
 }
 
 .m-fill {
   height: 100%;
-  background: var(--accent-crimson);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent-crimson) 0,
+    var(--accent-crimson) 6px,
+    var(--accent-crimson-bright) 6px,
+    var(--accent-crimson-bright) 8px
+  );
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -1698,18 +1721,37 @@ button, input, textarea {
   gap: 10px;
 }
 
+/* 레트로 게임의 대화창(텍스트 박스)을 흉내낸 토스트 알림 */
 .toast-item {
-  padding: 12px 20px;
-  background: var(--bg-panel);
-  border: 1px solid var(--accent-crimson);
-  color: var(--text-pure);
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  letter-spacing: 1px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  padding: 14px 22px;
+  background: #f6f1e2;
+  border: 3px solid #1a1a1a;
+  box-shadow:
+    0 0 0 2px #f6f1e2,
+    0 0 0 4px #1a1a1a,
+    6px 6px 0 rgba(0, 0, 0, 0.4);
+  color: #1a1a1a;
+  font-family: var(--font-pixel);
+  font-size: 0.62rem;
+  line-height: 1.6;
+  letter-spacing: 0.5px;
   transform: translateY(20px);
   opacity: 0;
   transition: all var(--transition-fast);
+  position: relative;
+}
+
+/* 대화창 우측 하단의 "다음" 표시 삼각형 */
+.toast-item::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid #1a1a1a;
 }
 
 .toast-item.reveal {

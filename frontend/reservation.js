@@ -463,6 +463,15 @@ async function sendToFormspree(data) {
   }
 }
 
+// 백엔드 저장까지는 성공했지만 메일 전송이 실패한 경우를 기억해 둔다.
+// 같은 내용으로 다시 시도할 때 중복 저장(= 자기 자신과의 충돌)을 피하기 위함이다.
+let backendSavedSignature = null;
+
+/** 같은 예약인지 판단하는 기준. 날짜·시간·신청자가 모두 같으면 같은 예약으로 본다. */
+function payloadSignature(payload) {
+  return [payload.date, payload.time, payload.email, payload.name].join("|");
+}
+
 /**
  * 백엔드에 예약을 저장한다. 같은 시간에 이미 예약이 있으면 백엔드가 409로 거절한다.
  * 화면에서 "(완료)"로 막아두긴 하지만, 폼을 열어둔 사이에 다른 사람이 같은 시간을
@@ -577,7 +586,19 @@ async function init() {
 
     // 중복 확인이 먼저다. 이미 찬 시간이면 메일을 보내기 전에 멈춰야,
     // 받아들여지지 않을 예약이 운영자에게 전달되는 일이 없다.
-    const backend = await saveReservationToBackend(payload);
+    //
+    // 단, 메일 전송이 실패해서 같은 내용으로 다시 시도하는 경우에는 백엔드에 이미
+    // 저장되어 있다. 그대로 또 저장하려 하면 "자기 자신" 때문에 409가 나서 영영
+    // 다시 보낼 수 없게 되므로, 한 번 저장에 성공한 내용은 기억해 두고 건너뛴다.
+    const signature = payloadSignature(payload);
+    const alreadySaved = backendSavedSignature === signature;
+    const backend = alreadySaved
+      ? { ok: true, conflict: false, reachable: true, message: "" }
+      : await saveReservationToBackend(payload);
+
+    if (backend.ok) {
+      backendSavedSignature = signature;
+    }
 
     if (backend.conflict) {
       restoreButton();
@@ -609,6 +630,8 @@ async function init() {
     }
 
     if (result.ok) {
+      // 접수가 끝났으므로 재시도용 기억은 비운다 (다음 예약은 새로 저장되어야 한다).
+      backendSavedSignature = null;
       // 방금 예약한 시간이 다음 신청자에게 "(완료)"로 보이도록 현황을 갱신한다.
       await loadBookedSlots();
       resetForm();

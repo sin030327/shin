@@ -34,13 +34,24 @@
   <div class="admin-dashboard-view" id="admin-dashboard-view" hidden>
     <header class="admin-header">
       <h1>프로젝트 관리</h1>
-      <div class="admin-header-actions">
-        <a href="index.html" class="admin-btn admin-btn-ghost" target="_blank" rel="noopener noreferrer">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> 사이트 보기
-        </a>
-        <button class="admin-btn admin-btn-ghost" id="admin-logout-btn">
-          <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
-        </button>
+      <div class="admin-header-right">
+        <!-- 관리 메뉴 탭. 로그인 후(대시보드 화면)에만 보인다. -->
+        <nav class="admin-tabs">
+          <a href="admin.html" class="admin-tab active">
+            <i class="fa-solid fa-folder-open"></i> 프로젝트 관리
+          </a>
+          <a href="admin-reservations.html" class="admin-tab">
+            <i class="fa-solid fa-calendar-check"></i> 예약하기 관리
+          </a>
+        </nav>
+        <div class="admin-header-actions">
+          <a href="index.html" class="admin-btn admin-btn-ghost" target="_blank" rel="noopener noreferrer">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> 사이트 보기
+          </a>
+          <button class="admin-btn admin-btn-ghost" id="admin-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
+          </button>
+        </div>
       </div>
     </header>
 

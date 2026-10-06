@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>예약 관리 | 신재훈 포트폴리오</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- style.css의 색상/폰트 변수(:root) + admin.css의 관리자 화면 공용 레이아웃을 그대로 쓴다 -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- 로그인되지 않은 상태에서 직접 들어온 경우 보여주는 안내 -->
+  <div class="admin-login-view" id="admin-auth-required" hidden>
+    <div class="admin-login-box">
+      <span class="admin-login-eyebrow">ADMIN</span>
+      <h1>로그인이 필요합니다</h1>
+      <p class="admin-login-sub">예약 관리는 관리자 로그인 후에 이용할 수 있습니다.</p>
+      <a href="admin.html" class="admin-btn admin-btn-primary">관리자 로그인으로 이동</a>
+    </div>
+  </div>
+
+  <!-- 예약 관리 화면 -->
+  <div id="admin-reservation-view" hidden>
+    <header class="admin-header">
+      <h1>예약 관리</h1>
+      <div class="admin-header-right">
+        <nav class="admin-tabs">
+          <a href="admin.html" class="admin-tab">
+            <i class="fa-solid fa-folder-open"></i> 프로젝트 관리
+          </a>
+          <a href="admin-reservations.html" class="admin-tab active">
+            <i class="fa-solid fa-calendar-check"></i> 예약하기 관리
+          </a>
+        </nav>
+        <div class="admin-header-actions">
+          <button class="admin-btn admin-btn-ghost" id="admin-refresh-btn">
+            <i class="fa-solid fa-rotate"></i> 새로고침
+          </button>
+          <button class="admin-btn admin-btn-ghost" id="admin-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <section class="admin-res-panel">
+      <div class="admin-list-header">
+        <h2>예약 요청 목록</h2>
+        <span class="admin-res-count" id="admin-res-count"></span>
+      </div>
+
+      <div class="admin-res-table-wrap">
+        <table class="admin-res-table">
+          <thead>
+            <tr>
+              <th>예약 번호</th>
+              <th>신청자/이메일</th>
+              <th>방문 희망 시간</th>
+              <th>방문 목적</th>
+              <th>처리 상태</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="admin-res-tbody"></tbody>
+        </table>
+      </div>
+
+      <p class="admin-empty-msg" id="admin-res-empty" hidden></p>
+    </section>
+  </div>
+
+  <div class="admin-toast" id="admin-toast" hidden></div>
+
+  <script src="admin-reservations.js"></script>
+</body>
+</html>

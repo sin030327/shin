@@ -18,9 +18,11 @@ backend/
 │   │   └── index.js         # 데이터 저장 계층 (지금은 로컬 파일, 나중에 실제 DB로 교체)
 │   ├── routes/
 │   │   ├── contact.js       # POST /api/contact (공개)
+│   │   ├── reservations.js  # POST /api/reservations (공개, 방문 예약 접수)
 │   │   ├── projects.js      # GET  /api/projects (공개, 공개 상태 프로젝트만)
 │   │   ├── adminAuth.js     # POST /api/admin/login, /logout, GET /session
-│   │   └── adminProjects.js # /api/admin/projects (전체 CRUD, 로그인 필요)
+│   │   ├── adminProjects.js # /api/admin/projects (전체 CRUD, 로그인 필요)
+│   │   └── adminReservations.js # /api/admin/reservations (조회/상태변경, 로그인 필요)
 │   └── scripts/
 │       └── hashPassword.js  # 관리자 비밀번호 해시 생성 도구
 ├── .env.example              # 필요한 환경 변수 목록 (복사해서 .env로 사용)
@@ -84,12 +86,15 @@ npm start        # http://localhost:4000
 | --- | --- | --- | --- |
 | GET | `/api/health` | - | 서버/DB 연결 상태 확인 |
 | POST | `/api/contact` | - | 연락처 폼 제출 |
+| POST | `/api/reservations` | - | 방문 예약 접수 (예약 페이지에서 사용) |
 | GET | `/api/projects` | - | 공개된 프로젝트 목록 (사이트에서 사용) |
 | POST | `/api/admin/login` | - | 관리자 로그인 (비밀번호) |
 | POST | `/api/admin/logout` | - | 로그아웃 |
 | GET | `/api/admin/session` | ✅ | 로그인 상태 확인 |
 | GET | `/api/admin/projects` | ✅ | 초안 포함 전체 프로젝트 목록 |
 | GET/POST/PUT/DELETE | `/api/admin/projects[/:id]` | ✅ | 프로젝트 조회/등록/수정/삭제 |
+| GET | `/api/admin/reservations` | ✅ | 전체 방문 예약 목록 (최신 신청순) |
+| PATCH | `/api/admin/reservations/:id/status` | ✅ | 처리 상태 변경 (`received`/`confirmed`/`change_requested`/`cancelled`) |
 
 ## 나중에 데이터베이스를 연결하려면
 

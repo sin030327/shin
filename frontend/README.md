@@ -16,6 +16,7 @@ Santioni Spirits 스타일에서 영감을 받은 시네마틱 개인 포트폴�
 | `visit.html` / `visit.css` / `visit.js` | 찾아오는 길 (지도 + 실시간 날씨) |
 | `reservation.html` / `reservation.css` / `reservation.js` | 방문 예약 (캘린더 + 예약 폼) |
 | `admin.html` / `admin.css` / `admin.js` | 관리자 페이지 (프로젝트 등록/수정) |
+| `admin-reservations.html` / `admin-reservations.js` | 관리자 페이지 — 예약 관리 (목록/상태 변경, 스타일은 `admin.css` 공용) |
 | `profile.jpg` | 프로필 이미지 (웹용 1400px, ~220KB) |
 | `vercel.json` | 배포 설정 (보안 헤더, cleanUrls) |
 

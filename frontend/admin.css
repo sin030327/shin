@@ -619,6 +619,67 @@
   cursor: default;
 }
 
+/* 상태별 건수 요약 문장 */
+.admin-res-summary {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
+}
+
+/* 상태별 필터 버튼 */
+.admin-res-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.admin-res-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border-line);
+  background: var(--bg-deep);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+}
+
+.admin-res-filter-btn:hover {
+  border-color: var(--accent-crimson);
+  color: var(--accent-crimson-bright);
+}
+
+.admin-res-filter-btn.active {
+  background: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+  color: #ffffff;
+}
+
+/* 버튼 안의 건수 배지 */
+.admin-res-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.admin-res-filter-btn.active .admin-res-filter-count {
+  background: rgba(0, 0, 0, 0.26);
+}
+
 @media (max-width: 860px) {
   .admin-header-right {
     width: 100%;

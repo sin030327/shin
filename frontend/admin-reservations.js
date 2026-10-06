@@ -14,17 +14,59 @@ const STATUS_OPTIONS = [
   { key: 'cancelled', label: '취소' }
 ];
 
+// 필터 전체를 뜻하는 값. 상태 키와 겹치지 않게 'all'로 둔다.
+const FILTER_ALL = 'all';
+
+/* --------------------------------------------------
+   요약/필터 계산 (DOM과 무관한 순수 함수 — 따로 테스트할 수 있게 분리)
+   -------------------------------------------------- */
+
+/**
+ * 상태별 건수를 센다.
+ * @returns {{ total: number, received: number, confirmed: number, change_requested: number, cancelled: number }}
+ */
+function summarizeByStatus(reservations) {
+  const counts = { total: reservations.length };
+  STATUS_OPTIONS.forEach((opt) => { counts[opt.key] = 0; });
+
+  reservations.forEach((r) => {
+    if (Object.prototype.hasOwnProperty.call(counts, r.status)) {
+      counts[r.status] += 1;
+    }
+  });
+
+  return counts;
+}
+
+/** '전체 12건 · 접수 5건 · 확정 4건 · 변경 요청 2건 · 취소 1건' */
+function buildSummarySentence(counts) {
+  const parts = [`전체 ${counts.total}건`];
+  STATUS_OPTIONS.forEach((opt) => {
+    parts.push(`${opt.label} ${counts[opt.key]}건`);
+  });
+  return parts.join(' · ');
+}
+
+/** 선택한 상태만 남긴다. FILTER_ALL이면 전부 그대로 반환한다. */
+function filterByStatus(reservations, status) {
+  if (status === FILTER_ALL) return reservations;
+  return reservations.filter((r) => r.status === status);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const authRequiredView = document.getElementById('admin-auth-required');
   const reservationView = document.getElementById('admin-reservation-view');
   const tbody = document.getElementById('admin-res-tbody');
   const emptyMsg = document.getElementById('admin-res-empty');
   const countEl = document.getElementById('admin-res-count');
+  const summaryEl = document.getElementById('admin-res-summary');
+  const filtersEl = document.getElementById('admin-res-filters');
   const refreshBtn = document.getElementById('admin-refresh-btn');
   const logoutBtn = document.getElementById('admin-logout-btn');
   const toastEl = document.getElementById('admin-toast');
 
   let cachedReservations = [];
+  let currentFilter = FILTER_ALL; // 현재 선택된 상태 필터
   let toastTimer = null;
 
   function showToast(msg) {
@@ -114,13 +156,57 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       tbody.innerHTML = '';
       countEl.textContent = '';
+      summaryEl.hidden = true;
+      filtersEl.hidden = true;
+      filtersEl.innerHTML = '';
       emptyMsg.hidden = false;
       emptyMsg.textContent = `예약 목록을 불러오지 못했습니다. ${describeError(err)}`;
     }
   }
 
+  /** 상태별 건수 요약 문장을 그린다. */
+  function renderSummary(counts) {
+    summaryEl.textContent = buildSummarySentence(counts);
+    summaryEl.hidden = counts.total === 0;
+  }
+
+  /** 상태별 필터 버튼을 건수와 함께 그린다. */
+  function renderFilters(counts) {
+    // 예약이 아예 없으면 0만 나열되므로 필터 자체를 숨긴다.
+    filtersEl.hidden = counts.total === 0;
+    if (counts.total === 0) {
+      filtersEl.innerHTML = '';
+      return;
+    }
+
+    const buttons = [{ key: FILTER_ALL, label: '전체', count: counts.total }].concat(
+      STATUS_OPTIONS.map((opt) => ({ key: opt.key, label: opt.label, count: counts[opt.key] }))
+    );
+
+    filtersEl.innerHTML = buttons.map((b) => `
+      <button type="button"
+        class="admin-res-filter-btn${currentFilter === b.key ? ' active' : ''}"
+        data-filter="${b.key}"
+        aria-pressed="${currentFilter === b.key}">
+        ${b.label}<span class="admin-res-filter-count">${b.count}</span>
+      </button>
+    `).join('');
+
+    // 매번 새로 그리기 때문에 이벤트도 그때그때 다시 건다.
+    filtersEl.querySelectorAll('.admin-res-filter-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        currentFilter = btn.dataset.filter;
+        renderTable();
+      });
+    });
+  }
+
   function renderTable() {
     tbody.innerHTML = '';
+
+    const counts = summarizeByStatus(cachedReservations);
+    renderSummary(counts);
+    renderFilters(counts);
 
     if (!cachedReservations.length) {
       emptyMsg.hidden = false;
@@ -129,10 +215,22 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    emptyMsg.hidden = true;
-    countEl.textContent = `총 ${cachedReservations.length}건`;
+    const visible = filterByStatus(cachedReservations, currentFilter);
+    const filterLabel = STATUS_OPTIONS.find((o) => o.key === currentFilter)?.label;
 
-    cachedReservations.forEach((r) => {
+    if (!visible.length) {
+      emptyMsg.hidden = false;
+      emptyMsg.textContent = `'${filterLabel}' 상태인 예약이 없습니다.`;
+      countEl.textContent = '';
+      return;
+    }
+
+    emptyMsg.hidden = true;
+    countEl.textContent = currentFilter === FILTER_ALL
+      ? `총 ${visible.length}건`
+      : `'${filterLabel}' ${visible.length}건 / 전체 ${counts.total}건`;
+
+    visible.forEach((r) => {
       const tr = document.createElement('tr');
       tr.className = `admin-res-row admin-res-row--${r.status}`;
       tr.innerHTML = `

@@ -70,8 +70,14 @@ const HOLIDAYS = {
 // 희망 시간 드롭다운 범위: 13:00 ~ 18:00, 30분 단위.
 const TIME_RANGE = { startHour: 13, endHour: 18, stepMinutes: 30 };
 
-// 연락처 폼(script.js)과 동일한 패턴: 백엔드가 켜져 있으면 실제로 저장되고,
-// 꺼져 있으면(현재 배포된 사이트) 조용히 폴백해서 방문자 경험은 그대로 유지한다.
+// 예약 내용을 운영자 이메일로 전달하는 Formspree 엔드포인트.
+// 수신 이메일 주소는 코드가 아니라 Formspree 대시보드의 폼 설정에서 지정한다.
+// 폼을 새로 만들면 아래 주소만 바꾸면 된다.
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mkjoggjj";
+
+// 연락처 폼(script.js)과 동일한 패턴: 백엔드가 켜져 있으면 로컬에도 함께 저장되고,
+// 꺼져 있으면(현재 배포된 사이트) 조용히 건너뛴다. 이메일 전달은 위 Formspree가
+// 담당하므로, 백엔드 저장은 있으면 좋은 보조 기록일 뿐 필수가 아니다.
 const API_BASE_URL = "http://localhost:4000";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -292,13 +298,80 @@ function closeConfirmModal() {
 }
 
 /* --------------------------------------------------
-   7. 저장 (백엔드 전송, 실패 시 오프라인 폴백)
+   7. 전송 (Formspree 이메일 전달 + 백엔드 보조 저장)
    -------------------------------------------------- */
 
-// script.js의 sendContactMessage()와 동일한 패턴: 백엔드가 꺼져 있거나
-// 응답이 없으면(2.5초 타임아웃) 조용히 폴백하고, 방문자에게는 접수된 것처럼
-// 안내한다(실제 처리/확정은 다음 단계에서 구현).
-async function saveReservation(payload) {
+/**
+ * Formspree로 보낼 본문을 만든다.
+ * - name / email: Formspree가 알아보는 기본 필드명. email은 자동으로 회신(Reply-To) 주소가 된다.
+ * - _subject: 운영자에게 도착하는 메일의 제목.
+ * - 그 외 항목은 메일 본문에 적힌 이름 그대로 보이므로 한글 라벨을 쓴다.
+ * - _gotcha: 사람이 채우지 않는 숨은 칸(허니팟). 값이 차 있으면 Formspree가 스팸으로 처리한다.
+ */
+function buildFormspreePayload(data) {
+  return {
+    name: data.name,
+    email: data.email,
+    _subject: `[방문 예약] ${data.name} / ${data.dateLabel} ${data.time}`,
+    "방문 희망 날짜": `${data.dateLabel} (${data.date})`,
+    "희망 시간": data.time,
+    "방문 목적": data.purpose,
+    "정보 제공 동의": data.consent ? "동의함" : "동의하지 않음",
+    _gotcha: data.gotcha || "",
+  };
+}
+
+/**
+ * Formspree로 예약 내용을 전송한다. 이 전송이 성공해야 운영자 이메일로 전달되므로,
+ * 실패하면 방문자에게 실패를 그대로 알리고 입력값을 유지해 다시 시도할 수 있게 한다.
+ * @returns {Promise<{ ok: boolean, message: string }>}
+ */
+async function sendToFormspree(data) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Accept 헤더가 있어야 Formspree가 페이지 이동 대신 JSON으로 응답한다.
+        Accept: "application/json",
+      },
+      body: JSON.stringify(buildFormspreePayload(data)),
+      signal: controller.signal,
+    });
+
+    if (res.ok) {
+      return { ok: true, message: "" };
+    }
+
+    // Formspree는 실패 시 { errors: [{ message, field }] } 형태로 이유를 알려준다.
+    let message = `전송에 실패했습니다. (HTTP ${res.status})`;
+    try {
+      const body = await res.json();
+      if (Array.isArray(body?.errors) && body.errors.length > 0) {
+        message = body.errors.map((e) => e.message).join(" / ");
+      }
+    } catch (parseErr) {
+      // 응답 본문이 JSON이 아니면 위의 기본 메시지를 그대로 쓴다.
+    }
+    return { ok: false, message };
+  } catch (err) {
+    const message =
+      err.name === "AbortError"
+        ? "응답 시간이 초과되었습니다. 네트워크 상태를 확인하고 다시 시도해 주세요."
+        : "네트워크 오류로 전송하지 못했습니다. 다시 시도해 주세요.";
+    return { ok: false, message };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// 로컬 백엔드(backend/)에도 같은 내용을 남겨 둔다. 백엔드가 꺼져 있으면
+// (현재 배포된 사이트가 이 경우) 조용히 실패해도 되는 보조 기록이므로,
+// 성공/실패 여부가 방문자 화면에 영향을 주지 않는다.
+async function saveReservationToBackend(payload) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 2500);
 
@@ -360,29 +433,41 @@ function init() {
 
   document.getElementById("res-modal-confirm").addEventListener("click", async () => {
     const confirmBtn = document.getElementById("res-modal-confirm");
-    confirmBtn.disabled = true;
+    const statusEl = document.getElementById("res-submit-status");
 
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = "<span>전송 중...</span>";
+
+    const dateISO = calendarState.selectedDateISO;
     const payload = {
-      date: calendarState.selectedDateISO,
+      date: dateISO,
+      dateLabel: formatDateLabel(dateISO),
       time: document.getElementById("res-time-select").value,
       name: document.getElementById("res-name").value.trim(),
       email: document.getElementById("res-email").value.trim(),
       purpose: document.getElementById("res-purpose").value.trim(),
       consent: document.getElementById("res-consent").checked,
+      gotcha: document.getElementById("res-gotcha")?.value || "",
     };
 
-    const saved = await saveReservation(payload);
+    // 운영자 이메일 전달(Formspree)이 성공 여부의 기준이다.
+    const result = await sendToFormspree(payload);
+    // 로컬 백엔드 기록은 보조 수단이므로 결과를 기다리되 화면에는 반영하지 않는다.
+    await saveReservationToBackend(payload);
 
     confirmBtn.disabled = false;
+    confirmBtn.innerHTML = '<span>예약 확정</span> <i class="fa-solid fa-check"></i>';
     closeConfirmModal();
 
-    const statusEl = document.getElementById("res-submit-status");
     if (statusEl) {
-      statusEl.textContent = saved
+      statusEl.classList.toggle("res-submit-status--error", !result.ok);
+      statusEl.textContent = result.ok
         ? "예약 신청이 접수되었습니다. 확인 후 입력하신 이메일로 연락드리겠습니다."
-        : "예약 신청이 접수되었습니다. (오프라인 상태 — 운영자 확인 후 처리됩니다.)";
+        : `예약 신청을 전송하지 못했습니다. ${result.message}`;
     }
-    resetForm();
+
+    // 전송에 실패했으면 입력값을 유지해서 바로 다시 시도할 수 있게 한다.
+    if (result.ok) resetForm();
   });
 
   // 팝업 바깥(배경) 클릭 또는 Esc로 닫기

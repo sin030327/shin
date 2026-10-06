@@ -304,6 +304,21 @@
   text-align: center;
 }
 
+/* 전송 실패 안내 (Formspree 전송이 실패했을 때) */
+.res-submit-status--error {
+  color: var(--accent-red-bright);
+}
+
+/* 스팸 방지용 허니팟 입력칸 — 화면에서 완전히 숨긴다. */
+.res-gotcha {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ---------- 최종 확인 팝업 ---------- */
 .res-modal-overlay {
   position: fixed;

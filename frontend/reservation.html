@@ -108,6 +108,10 @@
             <span>입력 정보를 예약 상담 목적으로 운영자에게 전달하는 것에 동의합니다. <span class="res-required">*</span></span>
           </label>
 
+          <!-- 스팸 방지용 허니팟. 사람에게는 보이지 않으며, 값이 채워져 오면
+               Formspree가 스팸으로 처리한다. 비워 두는 것이 정상. -->
+          <input type="text" id="res-gotcha" name="_gotcha" class="res-gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+
           <button type="submit" class="santioni-btn btn-filled res-submit-btn" id="res-submit-btn" disabled>
             <span>예약하기</span>
             <i class="fa-solid fa-calendar-check"></i>

@@ -10,13 +10,28 @@ Santioni Spirits 스타일에서 영감을 받은 시네마틱 개인 포트폴�
 
 | 파일 | 설명 |
 | --- | --- |
-| `index.html` | 페이지 마크업 |
-| `style.css` | 스타일 |
+| `index.html` | 메인 페이지 마크업 |
+| `style.css` | 공용 디자인 토큰 + 메인 페이지 스타일 |
 | `script.js` | 인터랙션 (패스코드 게이트, 타이핑, 모달 등) |
+| `visit.html` / `visit.css` / `visit.js` | 찾아오는 길 (지도 + 실시간 날씨) |
+| `reservation.html` / `reservation.css` / `reservation.js` | 방문 예약 (캘린더 + 예약 폼) |
+| `admin.html` / `admin.css` / `admin.js` | 관리자 페이지 (프로젝트 등록/수정) |
 | `profile.jpg` | 프로필 이미지 (웹용 1400px, ~220KB) |
 | `vercel.json` | 배포 설정 (보안 헤더, cleanUrls) |
 
 빌드 과정이 없는 순수 정적 사이트입니다.
+
+## 수정할 때 자주 찾는 값
+
+| 바꾸고 싶은 것 | 위치 |
+| --- | --- |
+| 찾아오는 길 주소·좌표 | `visit.js` 상단 `VISIT_CONFIG` |
+| 예약 가능 시간대 (현재 13:00~18:00, 30분 단위) | `reservation.js` 상단 `TIME_RANGE` |
+| 선택 불가로 막을 공휴일 | `reservation.js` 상단 `HOLIDAYS` (해가 바뀌면 갱신 필요) |
+| 예약 내용을 받을 Formspree 폼 | `reservation.js` 상단 `FORMSPREE_ENDPOINT` |
+
+> 예약 내용을 **받는 이메일 주소**는 코드가 아니라 [Formspree 대시보드](https://formspree.io/forms)의
+> 해당 폼 설정에서 지정합니다.
 
 ## 로컬 미리보기
 

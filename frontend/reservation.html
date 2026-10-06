@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>방문 예약 | 신재훈 포트폴리오</title>
+  <meta name="description" content="방문 날짜·시간을 선택하고 방문 예약을 신청할 수 있는 페이지.">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Google Fonts: index.html / visit.html과 동일하게 맞춰 디자인 통일 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- 공용 디자인 토큰(style.css) + 이 페이지 전용 스타일(reservation.css) -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="reservation.css">
+</head>
+<body>
+
+  <main class="res-page">
+    <div class="editorial-container">
+
+      <a href="visit.html" class="res-back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>찾아오는 길로 돌아가기</span>
+      </a>
+
+      <div class="res-header">
+        <span class="res-eyebrow">[ RESERVATION ]</span>
+        <h1 class="res-title">방문 예약</h1>
+        <p class="res-subtitle">평일(공휴일 제외) 중 원하시는 날짜와 시간을 선택하고, 아래 정보를 입력해 주세요.</p>
+      </div>
+
+      <form id="reservation-form" class="res-grid" novalidate>
+
+        <!-- 좌측: 캘린더 + 날짜/시간 선택 -->
+        <section class="panel-box res-panel res-calendar-panel">
+          <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+          <div class="panel-tag">DATE &amp; TIME</div>
+
+          <div class="res-calendar-head">
+            <button type="button" class="res-cal-nav" id="res-cal-prev" aria-label="이전 달">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span class="res-cal-month-label" id="res-cal-month-label">-</span>
+            <button type="button" class="res-cal-nav" id="res-cal-next" aria-label="다음 달">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="res-cal-weekdays">
+            <span class="res-cal-weekday res-weekend">일</span>
+            <span class="res-cal-weekday">월</span>
+            <span class="res-cal-weekday">화</span>
+            <span class="res-cal-weekday">수</span>
+            <span class="res-cal-weekday">목</span>
+            <span class="res-cal-weekday">금</span>
+            <span class="res-cal-weekday res-weekend">토</span>
+          </div>
+
+          <div class="res-cal-grid" id="res-cal-grid"></div>
+
+          <div class="res-cal-legend">
+            <span><i class="res-legend-dot res-legend-dot--holiday"></i>주말/공휴일(선택 불가)</span>
+            <span><i class="res-legend-dot res-legend-dot--selected"></i>선택한 날짜</span>
+          </div>
+
+          <div class="res-field">
+            <label class="res-field-label">선택한 날짜 <span class="res-required">*</span></label>
+            <div class="res-selected-date-box" id="res-selected-date-box">선택된 날짜가 없습니다</div>
+          </div>
+
+          <div class="res-field">
+            <label class="res-field-label" for="res-time-select">희망 시간 <span class="res-required">*</span></label>
+            <select id="res-time-select" class="res-select" required>
+              <option value="" selected disabled>시간을 선택하세요</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- 우측: 방문자 정보 -->
+        <section class="panel-box res-panel res-info-panel">
+          <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+          <div class="panel-tag">VISITOR INFO</div>
+
+          <div class="res-field">
+            <label class="res-field-label" for="res-name">이름 <span class="res-required">*</span></label>
+            <input type="text" id="res-name" class="res-input" placeholder="홍길동" required>
+          </div>
+
+          <div class="res-field">
+            <label class="res-field-label" for="res-email">답장받을 이메일 <span class="res-required">*</span></label>
+            <input type="email" id="res-email" class="res-input" placeholder="example@domain.com" required>
+            <p class="res-field-error" id="res-email-error"></p>
+          </div>
+
+          <div class="res-field">
+            <label class="res-field-label" for="res-purpose">방문 목적 <span class="res-required">*</span></label>
+            <textarea id="res-purpose" class="res-textarea res-textarea--large" rows="7" placeholder="방문 목적을 자세히 적어주세요. (예: 포트폴리오 관련 협업 미팅, 프로젝트 상담 등)" required></textarea>
+          </div>
+
+          <label class="res-consent-row">
+            <input type="checkbox" id="res-consent" required>
+            <span>입력 정보를 예약 상담 목적으로 운영자에게 전달하는 것에 동의합니다. <span class="res-required">*</span></span>
+          </label>
+
+          <!-- 스팸 방지용 허니팟. 사람에게는 보이지 않으며, 값이 채워져 오면
+               Formspree가 스팸으로 처리한다. 비워 두는 것이 정상. -->
+          <input type="text" id="res-gotcha" name="_gotcha" class="res-gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <button type="submit" class="santioni-btn btn-filled res-submit-btn" id="res-submit-btn" disabled>
+            <span>예약하기</span>
+            <i class="fa-solid fa-calendar-check"></i>
+          </button>
+
+          <p class="res-submit-status" id="res-submit-status"></p>
+        </section>
+
+      </form>
+
+    </div>
+  </main>
+
+  <!-- 최종 확인 팝업 -->
+  <div class="res-modal-overlay" id="res-modal-overlay">
+    <div class="res-modal-box panel-box">
+      <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+      <div class="panel-tag">예약 내용 최종 확인</div>
+
+      <dl class="res-modal-summary">
+        <dt>날짜</dt><dd id="res-confirm-date"></dd>
+        <dt>시간</dt><dd id="res-confirm-time"></dd>
+        <dt>이름</dt><dd id="res-confirm-name"></dd>
+        <dt>이메일</dt><dd id="res-confirm-email"></dd>
+        <dt>방문 목적</dt><dd id="res-confirm-purpose"></dd>
+      </dl>
+
+      <p class="res-modal-note">위 내용이 맞다면 "예약 확정"을 눌러주세요. 수정이 필요하면 "다시 작성"을 눌러 돌아갈 수 있습니다.</p>
+
+      <div class="res-modal-actions">
+        <button type="button" class="santioni-btn btn-outlined" id="res-modal-cancel">다시 작성</button>
+        <button type="button" class="santioni-btn btn-filled" id="res-modal-confirm">
+          <span>예약 확정</span>
+          <i class="fa-solid fa-check"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="reservation.js"></script>
+</body>
+</html>

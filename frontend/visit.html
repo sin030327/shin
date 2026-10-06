@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>찾아오는 길 | 신재훈 포트폴리오</title>
+  <meta name="description" content="상명대학교 천안캠퍼스 B306 위치 안내, 실시간 날씨 정보, 방문 예약 안내.">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Google Fonts: index.html과 동일하게 맞춰 디자인 통일 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- 공용 디자인 토큰(style.css) + 이 페이지 전용 스타일(visit.css) -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="visit.css">
+</head>
+<body>
+
+  <main class="visit-page">
+    <div class="editorial-container">
+
+      <a href="index.html#contact" class="visit-back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>포트폴리오로 돌아가기</span>
+      </a>
+
+      <div class="visit-header">
+        <span class="visit-eyebrow">[ FIND US ]</span>
+        <h1 class="visit-title">찾아오는 길</h1>
+        <p class="visit-subtitle">아래 위치로 방문해 주세요. 방문 전 날씨를 확인하시면 편리합니다.</p>
+      </div>
+
+      <div class="visit-grid">
+
+        <!-- 지도 + 주소 -->
+        <section class="panel-box visit-map-panel">
+          <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+          <div class="panel-tag">LOCATION</div>
+
+          <div class="visit-map-frame-wrapper">
+            <iframe id="visit-map-frame"
+              title="찾아오는 길 지도"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen></iframe>
+          </div>
+
+          <div class="visit-address-box">
+            <span class="visit-address-label" id="visit-address-label">주소 불러오는 중...</span>
+            <span class="visit-address-detail" id="visit-address-detail"></span>
+          </div>
+        </section>
+
+        <!-- 날씨 -->
+        <section class="panel-box visit-weather-panel">
+          <div class="panel-corners"><span class="corner tl">+</span><span class="corner tr">+</span><span class="corner bl">+</span><span class="corner br">+</span></div>
+          <div class="panel-tag">CURRENT WEATHER</div>
+
+          <div class="visit-weather-stats">
+            <div class="visit-weather-stat">
+              <span class="visit-weather-stat-label">온도</span>
+              <span class="visit-weather-stat-value" id="visit-weather-temp">--</span>
+            </div>
+            <div class="visit-weather-stat">
+              <span class="visit-weather-stat-label">습도</span>
+              <span class="visit-weather-stat-value" id="visit-weather-humidity">--</span>
+            </div>
+          </div>
+
+          <p class="visit-weather-status" id="visit-weather-status"></p>
+
+          <p class="visit-source-note">
+            지도 제공: Google 지도 (maps.google.com)<br>
+            날씨 정보 제공: Open-Meteo (open-meteo.com)
+          </p>
+        </section>
+
+      </div>
+
+      <!-- 방문 예약 CTA -->
+      <div class="visit-cta">
+        <p class="visit-cta-desc">방문 전 예약을 남겨주시면 더 원활하게 안내할 수 있습니다.</p>
+        <a href="reservation.html" class="santioni-btn btn-filled visit-reserve-btn">
+          <span>방문 예약하기</span>
+          <i class="fa-solid fa-calendar-check"></i>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="visit.js"></script>
+</body>
+</html>

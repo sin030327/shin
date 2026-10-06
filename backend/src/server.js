@@ -4,9 +4,11 @@ const cookieParser = require('cookie-parser');
 const config = require('./config');
 const db = require('./db');
 const contactRouter = require('./routes/contact');
+const reservationsRouter = require('./routes/reservations');
 const projectsRouter = require('./routes/projects');
 const adminAuthRouter = require('./routes/adminAuth');
 const adminProjectsRouter = require('./routes/adminProjects');
+const adminReservationsRouter = require('./routes/adminReservations');
 
 const app = express();
 
@@ -27,11 +29,13 @@ app.get('/api/health', (req, res) => {
 
 // 공개 API (인증 불필요)
 app.use('/api', contactRouter);
+app.use('/api', reservationsRouter);
 app.use('/api', projectsRouter);
 
 // 관리자 API (로그인 필요 — adminProjectsRouter 내부에서 requireAdminAuth 적용)
 app.use('/api/admin', adminAuthRouter);
 app.use('/api/admin', adminProjectsRouter);
+app.use('/api/admin', adminReservationsRouter);
 
 app.listen(config.port, () => {
   console.log(`[portfolio-backend] listening on http://localhost:${config.port}`);

@@ -201,6 +201,8 @@ function selectDate(iso) {
     box.classList.add("res-selected-date-box--filled");
   }
   renderCalendar();
+  // 날짜마다 이미 찬 시간이 다르므로 시간 목록을 다시 그린다.
+  renderTimeOptions();
   validateForm();
 }
 
@@ -220,25 +222,118 @@ function changeMonth(delta) {
 }
 
 /* --------------------------------------------------
-   4. 희망 시간 드롭다운
+   4. 희망 시간 드롭다운 (이미 예약된 시간은 "(완료)"로 막는다)
    -------------------------------------------------- */
 
-function populateTimeSelect() {
-  const select = document.getElementById("res-time-select");
-  if (!select) return;
+// 이미 예약이 찬 (날짜, 시간) 집합. "2026-10-15T14:00" 형태의 키로 들고 있다.
+const bookedSlots = {
+  keys: new Set(),
+  loaded: false, // 백엔드에서 현황을 받아왔는지 (못 받아온 경우를 구분하기 위함)
+};
 
+/** 날짜+시간을 하나의 키로 묶는다 (백엔드 db/index.js의 slotKey와 같은 규칙). */
+function slotKey(date, time) {
+  return `${date}T${time}`;
+}
+
+function isSlotBooked(date, time) {
+  return bookedSlots.keys.has(slotKey(date, time));
+}
+
+/** 13:00 ~ 18:00을 30분 간격으로 나눈 시간 목록을 만든다. */
+function buildTimeSlots() {
   const { startHour, endHour, stepMinutes } = TIME_RANGE;
+  const slots = [];
   let current = new Date(2000, 0, 1, startHour, 0);
   const end = new Date(2000, 0, 1, endHour, 0);
 
   while (current <= end) {
     const h = String(current.getHours()).padStart(2, "0");
     const m = String(current.getMinutes()).padStart(2, "0");
-    const option = document.createElement("option");
-    option.value = `${h}:${m}`;
-    option.textContent = `${h}:${m}`;
-    select.appendChild(option);
+    slots.push(`${h}:${m}`);
     current = new Date(current.getTime() + stepMinutes * 60000);
+  }
+  return slots;
+}
+
+/**
+ * 백엔드에서 "이미 찬 시간" 목록을 받아온다.
+ * 이 응답에는 날짜/시간만 들어 있고 신청자 정보는 포함되지 않는다.
+ * 백엔드가 꺼져 있으면 현황을 알 수 없으므로, 막지 않고 전부 선택 가능하게 둔다.
+ */
+async function loadBookedSlots() {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/reservations/booked-slots`, {
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    bookedSlots.keys = new Set((data.slots || []).map((s) => slotKey(s.date, s.time)));
+    bookedSlots.loaded = true;
+  } catch (err) {
+    bookedSlots.keys = new Set();
+    bookedSlots.loaded = false;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+/**
+ * 선택한 날짜에 맞춰 시간 드롭다운을 다시 그린다.
+ * 남은 시간은 그대로, 이미 예약된 시간은 "(완료)"를 붙이고 선택할 수 없게 한다.
+ */
+function renderTimeOptions() {
+  const select = document.getElementById("res-time-select");
+  const noteEl = document.getElementById("res-time-note");
+  if (!select) return;
+
+  const previouslySelected = select.value;
+  const dateISO = calendarState.selectedDateISO;
+
+  select.innerHTML = "";
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = dateISO ? "시간을 선택하세요" : "날짜를 먼저 선택하세요";
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  select.appendChild(placeholder);
+
+  let takenCount = 0;
+  buildTimeSlots().forEach((time) => {
+    const taken = Boolean(dateISO) && isSlotBooked(dateISO, time);
+    if (taken) takenCount += 1;
+
+    const option = document.createElement("option");
+    option.value = time;
+    option.textContent = taken ? `${time} (완료)` : time;
+    option.disabled = taken;
+    select.appendChild(option);
+  });
+
+  // 날짜를 바꾸기 전에 골라둔 시간이 새 날짜에서도 선택 가능하면 그대로 유지한다.
+  const stillSelectable =
+    previouslySelected && !(dateISO && isSlotBooked(dateISO, previouslySelected));
+  if (stillSelectable) {
+    select.value = previouslySelected;
+  }
+
+  if (noteEl) {
+    if (!dateISO) {
+      noteEl.textContent = "";
+    } else if (!bookedSlots.loaded) {
+      noteEl.textContent = "예약 현황을 확인하지 못했습니다. 선택하신 시간이 이미 찼을 수 있습니다.";
+    } else if (previouslySelected && !stillSelectable) {
+      noteEl.textContent = "선택하셨던 시간은 이미 예약이 차서 해제되었습니다. 다른 시간을 선택해 주세요.";
+    } else if (takenCount > 0) {
+      noteEl.textContent = `"(완료)"로 표시된 시간은 이미 예약되어 선택할 수 없습니다.`;
+    } else {
+      noteEl.textContent = "";
+    }
   }
 }
 
@@ -368,12 +463,19 @@ async function sendToFormspree(data) {
   }
 }
 
-// 로컬 백엔드(backend/)에도 같은 내용을 남겨 둔다. 백엔드가 꺼져 있으면
-// (현재 배포된 사이트가 이 경우) 조용히 실패해도 되는 보조 기록이므로,
-// 성공/실패 여부가 방문자 화면에 영향을 주지 않는다.
+/**
+ * 백엔드에 예약을 저장한다. 같은 시간에 이미 예약이 있으면 백엔드가 409로 거절한다.
+ * 화면에서 "(완료)"로 막아두긴 하지만, 폼을 열어둔 사이에 다른 사람이 같은 시간을
+ * 예약했을 수 있으므로 최종 판단은 항상 백엔드가 한다.
+ *
+ * 백엔드가 꺼져 있으면(현재 배포된 사이트가 이 경우) 중복 여부를 확인할 방법이
+ * 없으므로, 막지 않고 통과시킨다 — 이때 기록은 Formspree 메일로만 남는다.
+ *
+ * @returns {Promise<{ ok: boolean, conflict: boolean, reachable: boolean, message: string }>}
+ */
 async function saveReservationToBackend(payload) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 2500);
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
 
   try {
     const res = await fetch(`${API_BASE_URL}/api/reservations`, {
@@ -382,9 +484,22 @@ async function saveReservationToBackend(payload) {
       body: JSON.stringify(payload),
       signal: controller.signal,
     });
-    return res.ok;
+
+    if (res.status === 409) {
+      let message = "이미 예약된 시간입니다. 다른 시간을 선택해 주세요.";
+      try {
+        const body = await res.json();
+        if (body?.error) message = body.error;
+      } catch (parseErr) {
+        // 기본 메시지를 그대로 쓴다.
+      }
+      return { ok: false, conflict: true, reachable: true, message };
+    }
+
+    return { ok: res.ok, conflict: false, reachable: true, message: "" };
   } catch (err) {
-    return false;
+    // 백엔드 미실행/네트워크 오류 — 중복 확인 없이 진행한다.
+    return { ok: false, conflict: false, reachable: false, message: "" };
   } finally {
     clearTimeout(timeoutId);
   }
@@ -401,6 +516,7 @@ function resetForm() {
   document.getElementById("res-email-error").textContent = "";
   document.getElementById("res-email").classList.remove("res-input--invalid");
   renderCalendar();
+  renderTimeOptions();
   validateForm();
 }
 
@@ -408,9 +524,13 @@ function resetForm() {
    초기화
    -------------------------------------------------- */
 
-function init() {
-  populateTimeSelect();
+async function init() {
   renderCalendar();
+  renderTimeOptions();
+
+  // 이미 찬 시간 목록을 받아온 뒤 드롭다운을 다시 그린다.
+  await loadBookedSlots();
+  renderTimeOptions();
 
   document.getElementById("res-cal-prev").addEventListener("click", () => changeMonth(-1));
   document.getElementById("res-cal-next").addEventListener("click", () => changeMonth(1));
@@ -450,13 +570,35 @@ function init() {
       gotcha: document.getElementById("res-gotcha")?.value || "",
     };
 
-    // 운영자 이메일 전달(Formspree)이 성공 여부의 기준이다.
-    const result = await sendToFormspree(payload);
-    // 로컬 백엔드 기록은 보조 수단이므로 결과를 기다리되 화면에는 반영하지 않는다.
-    await saveReservationToBackend(payload);
+    const restoreButton = () => {
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = '<span>예약 확정</span> <i class="fa-solid fa-check"></i>';
+    };
 
-    confirmBtn.disabled = false;
-    confirmBtn.innerHTML = '<span>예약 확정</span> <i class="fa-solid fa-check"></i>';
+    // 중복 확인이 먼저다. 이미 찬 시간이면 메일을 보내기 전에 멈춰야,
+    // 받아들여지지 않을 예약이 운영자에게 전달되는 일이 없다.
+    const backend = await saveReservationToBackend(payload);
+
+    if (backend.conflict) {
+      restoreButton();
+      closeConfirmModal();
+
+      // 방금 찬 시간이 바로 "(완료)"로 보이도록 현황을 다시 받아온다.
+      await loadBookedSlots();
+      renderTimeOptions();
+      validateForm();
+
+      if (statusEl) {
+        statusEl.classList.add("res-submit-status--error");
+        statusEl.textContent = `${backend.message} 시간을 다시 선택해 주세요.`;
+      }
+      return;
+    }
+
+    // 운영자 이메일 전달(Formspree). 방문자에게 보여줄 성공 여부의 기준이다.
+    const result = await sendToFormspree(payload);
+
+    restoreButton();
     closeConfirmModal();
 
     if (statusEl) {
@@ -466,8 +608,12 @@ function init() {
         : `예약 신청을 전송하지 못했습니다. ${result.message}`;
     }
 
+    if (result.ok) {
+      // 방금 예약한 시간이 다음 신청자에게 "(완료)"로 보이도록 현황을 갱신한다.
+      await loadBookedSlots();
+      resetForm();
+    }
     // 전송에 실패했으면 입력값을 유지해서 바로 다시 시도할 수 있게 한다.
-    if (result.ok) resetForm();
   });
 
   // 팝업 바깥(배경) 클릭 또는 Esc로 닫기

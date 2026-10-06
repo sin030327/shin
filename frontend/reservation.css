@@ -382,3 +382,17 @@
   flex: 1;
   justify-content: center;
 }
+
+/* 이미 예약된 시간 안내 문구 (희망 시간 드롭다운 아래) */
+.res-time-note {
+  margin-top: 8px;
+  min-height: 1.2em;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* 드롭다운에서 "(완료)"로 막힌 항목 */
+.res-select option:disabled {
+  color: var(--text-muted);
+}

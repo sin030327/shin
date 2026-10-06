@@ -125,6 +125,47 @@ function normalizeReservationStatus(status) {
   return Object.prototype.hasOwnProperty.call(RESERVATION_STATUSES, status) ? status : 'received';
 }
 
+// 이 상태의 예약은 해당 날짜·시간을 "이미 찬 자리"로 본다.
+//   취소(cancelled)      — 방문하지 않으므로 그 시간을 다시 열어준다.
+//   변경 요청(change_requested) — 그 시간에는 만나지 않겠다는 뜻이므로 역시 다시 열어준다.
+// 운영 방식이 바뀌면 이 배열만 고치면 된다.
+const SLOT_BLOCKING_STATUSES = ['received', 'confirmed'];
+
+/** 날짜+시간을 하나의 키로 묶는다. 중복 판단은 전부 이 키를 기준으로 한다. */
+function slotKey(date, time) {
+  return `${String(date || '').trim()}T${String(time || '').trim()}`;
+}
+
+/**
+ * 이미 예약이 찬 (날짜, 시간) 목록을 반환한다.
+ * 예약 페이지(공개)에서 쓰이므로 신청자 이름/이메일/방문목적 같은 개인정보는
+ * 절대 포함하지 않는다 — 날짜와 시간만 내보낸다.
+ * @returns {{ date: string, time: string }[]}
+ */
+function listBookedSlots() {
+  const reservations = readJsonStore(RESERVATIONS_STORE_PATH);
+  const seen = new Set();
+  const slots = [];
+
+  reservations.forEach((r) => {
+    if (!SLOT_BLOCKING_STATUSES.includes(normalizeReservationStatus(r.status))) return;
+    if (!r.date || !r.time) return;
+
+    const key = slotKey(r.date, r.time);
+    if (seen.has(key)) return;
+    seen.add(key);
+    slots.push({ date: r.date, time: r.time });
+  });
+
+  return slots;
+}
+
+/** 해당 날짜·시간에 이미 예약이 있는지 확인한다. */
+function isSlotTaken(date, time) {
+  const key = slotKey(date, time);
+  return listBookedSlots().some((s) => slotKey(s.date, s.time) === key);
+}
+
 /** 관리자 화면에 내보내기 전에 예약 번호/상태를 보정한다. */
 function decorateReservation(record) {
   return {
@@ -135,26 +176,50 @@ function decorateReservation(record) {
   };
 }
 
+/** 이미 찬 시간에 예약을 시도했을 때 던지는 에러. 라우터가 409로 변환한다. */
+class SlotTakenError extends Error {
+  constructor(date, time) {
+    super(`이미 예약된 시간입니다. (${date} ${time})`);
+    this.name = 'SlotTakenError';
+    this.code = 'SLOT_TAKEN';
+  }
+}
+
 /**
  * 방문 예약 신청 1건을 저장한다.
- * 지금은 "실제 처리"(확정 메일 발송 등)는 하지 않고, 운영자가 관리자 화면에서
+ * 같은 날짜·시간에 이미 예약(접수/확정)이 있으면 저장하지 않고 SlotTakenError를 던진다.
+ *
+ * 중복 확인과 저장 사이에 await가 없도록 일부러 동기 블록으로 묶어 두었다.
+ * Node는 한 프로세스 안에서 이 구간을 끊지 않으므로, 두 요청이 동시에 들어와도
+ * "둘 다 비어 있다고 판단하고 둘 다 저장"되는 상황이 생기지 않는다.
+ *
+ * 실제 처리(확정 메일 발송 등)는 아직 하지 않고, 운영자가 관리자 화면에서
  * 확인/상태 변경할 수 있도록 저장만 한다.
  *
- * TODO(다음 단계): 같은 날짜·시간에 이미 'confirmed' 예약이 있으면 중복 접수를
- *   막아야 한다. 지금은 겹치는 신청도 그대로 저장되며, 운영자가 관리자 화면에서
- *   직접 보고 판단한다.
- *
  * @param {{ date: string, time: string, name: string, email: string, purpose: string }} data
+ * @throws {SlotTakenError} 해당 날짜·시간이 이미 찼을 때
  */
 async function saveReservation(data) {
   if (isDatabaseConnected()) {
     // TODO(DB 연결 시 구현): saveContactMessage()와 동일한 방식으로 실제 INSERT로 교체.
+    // 그때는 (date, time)에 UNIQUE 제약을 걸어 DB 차원에서 중복을 막는 편이 확실하다.
     throw new Error(
       'DATABASE_URL은 설정되어 있지만 실제 DB 연결 로직이 아직 구현되지 않았습니다. src/db/index.js의 TODO를 확인하세요.'
     );
   }
 
   const reservations = readJsonStore(RESERVATIONS_STORE_PATH);
+
+  const requestedKey = slotKey(data.date, data.time);
+  const conflict = reservations.some(
+    (r) =>
+      SLOT_BLOCKING_STATUSES.includes(normalizeReservationStatus(r.status)) &&
+      slotKey(r.date, r.time) === requestedKey
+  );
+  if (conflict) {
+    throw new SlotTakenError(data.date, data.time);
+  }
+
   const record = {
     id: reservations.length + 1,
     reservationNo: buildReservationNo(data),
@@ -298,8 +363,12 @@ module.exports = {
   isDatabaseConnected,
   saveContactMessage,
   RESERVATION_STATUSES,
+  SLOT_BLOCKING_STATUSES,
+  SlotTakenError,
   buildReservationNo,
   saveReservation,
+  listBookedSlots,
+  isSlotTaken,
   listAllReservations,
   updateReservationStatus,
   listAllProjects,

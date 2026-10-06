@@ -18,7 +18,7 @@ backend/
 │   │   └── index.js         # 데이터 저장 계층 (지금은 로컬 파일, 나중에 실제 DB로 교체)
 │   ├── routes/
 │   │   ├── contact.js       # POST /api/contact (공개)
-│   │   ├── reservations.js  # POST /api/reservations (공개, 방문 예약 접수)
+│   │   ├── reservations.js  # /api/reservations (공개, 접수 + 찬 시간 조회)
 │   │   ├── projects.js      # GET  /api/projects (공개, 공개 상태 프로젝트만)
 │   │   ├── adminAuth.js     # POST /api/admin/login, /logout, GET /session
 │   │   ├── adminProjects.js # /api/admin/projects (전체 CRUD, 로그인 필요)
@@ -86,7 +86,8 @@ npm start        # http://localhost:4000
 | --- | --- | --- | --- |
 | GET | `/api/health` | - | 서버/DB 연결 상태 확인 |
 | POST | `/api/contact` | - | 연락처 폼 제출 |
-| POST | `/api/reservations` | - | 방문 예약 접수 (예약 페이지에서 사용) |
+| POST | `/api/reservations` | - | 방문 예약 접수 (같은 날짜·시간이 이미 찼으면 409) |
+| GET | `/api/reservations/booked-slots` | - | 이미 찬 날짜·시간 목록 (개인정보 없이 날짜/시간만) |
 | GET | `/api/projects` | - | 공개된 프로젝트 목록 (사이트에서 사용) |
 | POST | `/api/admin/login` | - | 관리자 로그인 (비밀번호) |
 | POST | `/api/admin/logout` | - | 로그아웃 |

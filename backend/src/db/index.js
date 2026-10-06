@@ -21,6 +21,7 @@ const config = require('../config');
 const DATA_DIR = path.join(__dirname, '..', '..', 'data');
 const MESSAGES_STORE_PATH = path.join(DATA_DIR, 'messages.local.json');
 const PROJECTS_STORE_PATH = path.join(DATA_DIR, 'projects.local.json');
+const RESERVATIONS_STORE_PATH = path.join(DATA_DIR, 'reservations.local.json');
 
 function isDatabaseConnected() {
   return Boolean(config.databaseUrl);
@@ -74,6 +75,36 @@ async function saveContactMessage(data) {
   };
   messages.push(record);
   writeJsonStore(MESSAGES_STORE_PATH, messages);
+  return record;
+}
+
+// ---------------------------------------------------------------------------
+// 방문 예약 (찾아오는 길 페이지 -> 예약 폼)
+// ---------------------------------------------------------------------------
+
+/**
+ * 방문 예약 신청 1건을 저장한다.
+ * 지금은 "실제 처리"(캘린더 중복 방지, 확정 메일 발송 등)는 하지 않고,
+ * 운영자가 나중에 확인할 수 있도록 저장만 한다.
+ * @param {{ date: string, time: string, name: string, email: string, purpose: string }} data
+ */
+async function saveReservation(data) {
+  if (isDatabaseConnected()) {
+    // TODO(DB 연결 시 구현): saveContactMessage()와 동일한 방식으로 실제 INSERT로 교체.
+    throw new Error(
+      'DATABASE_URL은 설정되어 있지만 실제 DB 연결 로직이 아직 구현되지 않았습니다. src/db/index.js의 TODO를 확인하세요.'
+    );
+  }
+
+  const reservations = readJsonStore(RESERVATIONS_STORE_PATH);
+  const record = {
+    id: reservations.length + 1,
+    status: 'pending', // 아직 운영자가 확인/확정하기 전 상태. 나중에 처리 로직을 붙일 때 사용.
+    ...data,
+    createdAt: new Date().toISOString()
+  };
+  reservations.push(record);
+  writeJsonStore(RESERVATIONS_STORE_PATH, reservations);
   return record;
 }
 
@@ -173,6 +204,7 @@ function deleteProject(id) {
 module.exports = {
   isDatabaseConnected,
   saveContactMessage,
+  saveReservation,
   listAllProjects,
   listPublishedProjects,
   getProjectById,

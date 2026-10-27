@@ -1,0 +1,375 @@
+/* ==========================================================================
+   POKEBALL TIMELINE  —  공을 누르면 이력이 열리는 장치
+   --------------------------------------------------------------------------
+   짝이 되는 파일: pokeball.js
+
+   구조 (pokeball.js 가 자동으로 만들어 넣습니다. HTML에 직접 쓰지 않습니다)
+     .ball-rack                     공을 늘어놓는 줄
+       └ .pokeball                  공 하나 = 이력 하나 (진짜 <button>)
+           └ .pokeball__ball        공 몸통
+               ├ .pokeball__half--top     위 뚜껑 (열릴 때 위로 젖혀짐)
+               ├ .pokeball__half--bottom  아래 몸통
+               ├ .pokeball__band          가운데 검은 띠
+               ├ .pokeball__btn           가운데 둥근 버튼
+               └ .pokeball__flash         열릴 때 터지는 빛
+           └ .pokeball__meta        공 아래 연도 / 분류 글자
+
+   색을 바꾸려면 아래 "공 종류별 색" 부분의 변수만 고치면 됩니다.
+   기능을 통째로 빼려면 index.html 에서 이 파일과 pokeball.js 두 줄만 지우면
+   원래의 목록형 이력으로 돌아갑니다.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   공을 늘어놓는 줄
+   ------------------------------------------------------------------------ */
+.ball-rack {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(28px, 6vw, 72px);
+  padding: 12px 0 56px;
+}
+
+.ball-rack__hint {
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  margin-bottom: 34px;
+}
+.ball-rack__hint b { color: var(--accent-crimson); font-weight: 600; }
+
+/* --------------------------------------------------------------------------
+   공 (버튼)
+   ------------------------------------------------------------------------ */
+.pokeball {
+  --size: clamp(104px, 13vw, 148px);
+  --ball-top: #ee4036;      /* 위 뚜껑 색 */
+  --ball-bottom: #f7f7f5;   /* 아래 몸통 색 */
+  --ball-band: #15151a;     /* 가운데 띠 색 */
+  --ball-accent: transparent;
+
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 공이 열리면 아래 반구가 내려오므로, 글자를 덮지 않을 만큼 띄워둔다
+     (내려오는 거리 = 공 지름의 약 17%) */
+  gap: calc(var(--size) * 0.26);
+  font: inherit;
+  color: inherit;
+}
+
+.pokeball__ball {
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  /* 공 전체가 둥둥 떠 있는 느낌 */
+  animation: ball-float 4.5s ease-in-out infinite;
+  animation-delay: var(--ball-delay, 0ms);
+  transition: transform 0.45s var(--ease-out);
+}
+.pokeball:hover .pokeball__ball { transform: translateY(-10px) scale(1.06); }
+.pokeball:focus-visible { outline: none; }
+.pokeball:focus-visible .pokeball__ball {
+  transform: translateY(-10px) scale(1.06);
+  filter: drop-shadow(0 0 0 2px var(--accent-crimson));
+}
+
+@keyframes ball-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+
+/* 바닥 그림자 */
+.pokeball__ball::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -16px;
+  width: 64%;
+  height: 12px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55), transparent 70%);
+  filter: blur(3px);
+  z-index: -1;
+}
+
+/* --------------------------------------------------------------------------
+   위/아래 반구
+   각 반구가 스스로 둥근 모양을 갖는다. 그래야 열릴 때 서로 떨어져도
+   모양이 깨지지 않는다 (부모에 overflow:hidden 을 걸지 않아도 된다).
+   ------------------------------------------------------------------------ */
+.pokeball__half {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+  transition: transform 0.55s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+.pokeball__half--top {
+  top: 0;
+  background: var(--ball-top);
+  border-radius: 999px 999px 0 0;
+  box-shadow:
+    inset -16px -6px 30px rgba(0, 0, 0, 0.34),
+    inset 14px 10px 22px rgba(255, 255, 255, 0.26);
+}
+
+.pokeball__half--bottom {
+  bottom: 0;
+  background: var(--ball-bottom);
+  border-radius: 0 0 999px 999px;
+  box-shadow:
+    inset -16px 4px 28px rgba(0, 0, 0, 0.2),
+    inset 12px -8px 20px rgba(255, 255, 255, 0.55);
+}
+
+/* 왼쪽 위 반짝임 */
+.pokeball__gloss {
+  position: absolute;
+  top: 14%;
+  left: 16%;
+  width: 34%;
+  height: 32%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.78), transparent 68%);
+  pointer-events: none;
+}
+
+/* 가운데 띠와 버튼 */
+.pokeball__band {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 9%;
+  transform: translateY(-50%);
+  background: var(--ball-band);
+  transition: opacity 0.35s var(--ease-out);
+}
+
+.pokeball__btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 27%;
+  height: 27%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #fff;
+  border: calc(var(--size) * 0.035) solid var(--ball-band);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  z-index: 3;
+  transition: box-shadow 0.4s var(--ease-out), border-color 0.4s var(--ease-out);
+}
+/* 버튼 안쪽의 작은 원 */
+.pokeball__btn::after {
+  content: '';
+  position: absolute;
+  inset: 17%;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 0, 0, 0.42);
+}
+.pokeball:hover .pokeball__btn {
+  box-shadow: 0 0 0 4px rgba(240, 74, 30, 0.3), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   공 종류별 색  (pokeball.js 가 data-variant 를 붙입니다)
+   ------------------------------------------------------------------------ */
+
+/* 몬스터볼 — 빨강 */
+.pokeball[data-variant='poke'] { --ball-top: #ee4036; }
+
+/* 수퍼볼 — 파랑 + 빨간 날개 */
+.pokeball[data-variant='great'] { --ball-top: #2f8fd8; --ball-accent: #ee4036; }
+.pokeball[data-variant='great'] .pokeball__accent {
+  position: absolute;
+  bottom: -6%;
+  width: 34%;
+  height: 86%;
+  background: var(--ball-accent);
+  border-radius: 60% 60% 0 0 / 70% 70% 0 0;
+}
+.pokeball[data-variant='great'] .pokeball__accent--1 { left: -4%; transform: rotate(16deg); }
+.pokeball[data-variant='great'] .pokeball__accent--2 { right: -4%; transform: rotate(-16deg); }
+
+/* 하이퍼볼 — 검정 + 노란 띠 */
+.pokeball[data-variant='ultra'] { --ball-top: #2a2521; --ball-accent: #f3d04e; }
+.pokeball[data-variant='ultra'] .pokeball__accent {
+  position: absolute;
+  bottom: -10%;
+  width: 30%;
+  height: 100%;
+  background: var(--ball-accent);
+  border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+}
+.pokeball[data-variant='ultra'] .pokeball__accent--1 { left: -6%; transform: rotate(13deg); }
+.pokeball[data-variant='ultra'] .pokeball__accent--2 { right: -6%; transform: rotate(-13deg); }
+
+/* 마스터볼 — 보라 + 분홍 + M */
+.pokeball[data-variant='master'] { --ball-top: #7a4fa3; --ball-accent: #e8469b; }
+.pokeball[data-variant='master'] .pokeball__accent {
+  position: absolute;
+  top: -14%;
+  width: 42%;
+  height: 58%;
+  background: var(--ball-accent);
+  border-radius: 50%;
+}
+.pokeball[data-variant='master'] .pokeball__accent--1 { left: -8%; }
+.pokeball[data-variant='master'] .pokeball__accent--2 { right: -8%; }
+.pokeball__mark {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: calc(var(--size) * 0.22);
+  line-height: 1;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+
+/* 프리미어볼 — 흰색 + 빨간 띠 */
+.pokeball[data-variant='premier'] {
+  --ball-top: #fbfbf9;
+  --ball-bottom: #fbfbf9;
+  --ball-band: #ee4036;
+}
+.pokeball[data-variant='premier'] .pokeball__half--top {
+  box-shadow:
+    inset -16px -6px 30px rgba(0, 0, 0, 0.16),
+    inset 14px 10px 22px rgba(255, 255, 255, 0.7);
+}
+.pokeball[data-variant='premier'] .pokeball__band { height: 5%; }
+
+/* --------------------------------------------------------------------------
+   공 아래 글자
+   ------------------------------------------------------------------------ */
+.pokeball__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+}
+.pokeball__year {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--accent-crimson);
+}
+.pokeball__tag {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  border: 1px solid var(--border-line);
+  border-radius: 9999px;
+  padding: 4px 11px;
+  transition: color 0.35s var(--ease-out), border-color 0.35s var(--ease-out);
+}
+.pokeball[aria-expanded='true'] .pokeball__tag {
+  color: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+}
+
+/* --------------------------------------------------------------------------
+   흔들림 → 열림
+   ------------------------------------------------------------------------ */
+.pokeball.is-shaking .pokeball__ball {
+  animation: ball-shake 0.62s ease-in-out;
+}
+@keyframes ball-shake {
+  0%, 100%      { transform: rotate(0) translateY(0); }
+  15%           { transform: rotate(-16deg) translateY(-4px); }
+  32%           { transform: rotate(14deg) translateY(-6px); }
+  50%           { transform: rotate(-12deg) translateY(-4px); }
+  68%           { transform: rotate(10deg) translateY(-6px); }
+  85%           { transform: rotate(-6deg) translateY(-2px); }
+}
+
+/* 열린 상태: 뚜껑이 위로, 몸통이 아래로 벌어진다 */
+.pokeball.is-open .pokeball__half--top {
+  transform: translateY(-38%) rotate(-13deg);
+}
+.pokeball.is-open .pokeball__half--bottom {
+  transform: translateY(34%) rotate(13deg);
+}
+.pokeball.is-open .pokeball__band { opacity: 0; }
+.pokeball.is-open .pokeball__btn {
+  border-color: var(--accent-crimson);
+  box-shadow: 0 0 0 6px rgba(240, 74, 30, 0.35), 0 0 26px rgba(240, 74, 30, 0.75);
+}
+.pokeball.is-open .pokeball__ball { animation-play-state: paused; }
+
+/* 열릴 때 터지는 빛 */
+.pokeball__flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10%;
+  height: 10%;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 237, 210, 0.9) 35%, rgba(240, 74, 30, 0) 72%);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 2;
+}
+.pokeball.is-open .pokeball__flash { animation: ball-flash 0.75s ease-out; }
+@keyframes ball-flash {
+  0%   { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  22%  { opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(11); opacity: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   열린 이력 카드
+   ------------------------------------------------------------------------ */
+.timeline-row.is-collapsed { display: none; }
+
+/* 공에서 튀어나오듯 아래에서 솟아오른다 */
+.timeline-row.is-popping {
+  opacity: 0;
+  transform: translateY(34px) scale(0.97);
+}
+.timeline-row.is-popped {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.55s var(--ease-out),
+    transform 0.65s cubic-bezier(0.34, 1.3, 0.5, 1);
+}
+
+/* 공으로 여닫는 동안에는 줄 호버 효과가 거슬리므로 끈다 */
+.ball-mode .timeline-row:hover { padding-left: 0; background: transparent; }
+.ball-mode .editorial-timeline { min-height: 220px; }
+
+/* --------------------------------------------------------------------------
+   접근성 / 반응형
+   ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .pokeball__ball,
+  .pokeball.is-shaking .pokeball__ball { animation: none; }
+  .pokeball__half { transition: none; }
+  .pokeball.is-open .pokeball__flash { animation: none; }
+  .timeline-row.is-popping { opacity: 1; transform: none; }
+}
+
+@media (max-width: 560px) {
+  .ball-rack { gap: 30px 26px; padding-bottom: 40px; }
+  .pokeball { --size: 92px; }
+  .ball-rack__hint { margin-bottom: 24px; font-size: 0.6rem; }
+}

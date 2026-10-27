@@ -59,7 +59,7 @@
     { selector: '.about-panels-grid > .about-item-panel', type: 'up', stagger: 110 },
     { selector: '.skills-matrix-grid > .skill-col-panel', type: 'up', stagger: 120 },
     { selector: '.stories-grid > .story-card', type: 'up', stagger: 100 },
-    { selector: '.editorial-timeline > .timeline-row', type: 'left', stagger: 110 },
+    // 이력(.timeline-row)은 pokeball.js 가 여닫으므로 여기서 다루지 않는다.
     { selector: '.contact-editorial-grid > .panel-box', type: 'up', stagger: 140 },
     { selector: '.footer-sub-grid > .f-col', type: 'up', stagger: 80 },
     { selector: '.footer-huge-sign', type: 'up', stagger: 0 },

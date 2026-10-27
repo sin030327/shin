@@ -5,7 +5,7 @@
 --  (01 ~ 03 을 먼저 실행한 뒤에 돌려야 합니다)
 --
 --  무엇이 들어가나요?
---    프로젝트 6건, 스킬 12개, 이력 4건
+--    프로젝트 6건, 스킬 12개, 이력 2건
 --  이 파일은 index.html 과 script.js 에서 자동으로 뽑아 만든 것이라
 --  지금 화면에 보이는 내용과 글자 하나까지 같습니다.
 --
@@ -369,11 +369,7 @@ delete from timeline_entries;
 insert into timeline_entries (period_label, title, role, description, display_order)
   values ('2024 - PRESENT', '상명대학교 (SangMyung University)', '소프트웨어 전공 심화', '자료구조, 알고리즘, 운영체제, 컴퓨터 네트워크, 데이터베이스 등 탄탄한 컴퓨터 공학 기초 이론을 이수하고 다양한 전공 팀 프로젝트를 수행 중입니다.', 1);
 insert into timeline_entries (period_label, title, role, description, display_order)
-  values ('2025', '팀 프로젝트 & 서비스 구현', '웹 프론트엔드 및 백엔드 개발', '팀원들과의 적극적인 Git 브랜치 협업 및 코드 리뷰를 통해 학내 불편 사항을 해결하는 스터디룸 예약 및 일정 관리 웹 서비스를 구현했습니다.', 2);
-insert into timeline_entries (period_label, title, role, description, display_order)
-  values ('2025', '대한민국 전통조경대전 제2회', '장려상 수상 · 청도서원(淸道書院)', '전통조경의 공간성과 장소성을 현대적으로 해석한 팀 프로젝트 "청도서원(淸道書院)"으로 대한민국 전통조경대전 제2회에서 장려상을 수상했습니다.', 3);
-insert into timeline_entries (period_label, title, role, description, display_order)
-  values ('CONTINUOUS', '기술 아카이빙 및 인터랙티브 웹 연구', '지속적인 기술 학습 및 기록', '현대적인 웹 인터랙션 기법과 클린 아키텍처를 연구하며, 개발 과정에서 발생한 트러블슈팅과 배운 점을 블로그에 체계적으로 기록하고 있습니다.', 4);
+  values ('2025', '대한민국 전통조경대전 제2회', '장려상 수상 · 청도서원(淸道書院)', '전통조경의 공간성과 장소성을 현대적으로 해석한 팀 프로젝트 "청도서원(淸道書院)"으로 대한민국 전통조경대전 제2회에서 장려상을 수상했습니다.', 2);
 
 commit;
 

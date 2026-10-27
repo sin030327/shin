@@ -348,7 +348,13 @@ body {
   background: none;
 }
 
-.hero-split-grid { gap: 20px; }
+/* 증명사진 패널을 뺐으므로 선언문 패널이 한 단을 다 쓴다 */
+.hero-split-grid {
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.statement-panel { padding: 46px 42px 38px; }
+.statement-body { max-width: 72ch; }
 
 .panel-box {
   background: var(--bg-panel);
@@ -1077,4 +1083,177 @@ body {
   .timeline-row:hover { padding-left: 10px; }
   .contact-direct-panel,
   .contact-form-panel { padding: 30px 22px; }
+}
+
+/* ==========================================================================
+   17. 역동적인 모션 레이어
+   --------------------------------------------------------------------------
+   motion.js 와 짝을 이룹니다. 여기서는 "어떻게 보일지"만 정의하고,
+   언제 켜고 끄는지는 전부 motion.js 가 클래스/변수로 조종합니다.
+   ========================================================================== */
+
+/* --- 글자 하나씩 솟아오르는 제목 --------------------------------------- */
+.char-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em; /* 글자 아랫부분(y, g)이 잘리지 않도록 */
+}
+.char {
+  display: inline-block;
+  white-space: pre;        /* 단어 사이 공백 유지 */
+  transform: translate3d(0, 110%, 0) rotate(6deg);
+  opacity: 0;
+  transition:
+    transform 0.85s var(--ease-out),
+    opacity 0.6s var(--ease-out);
+  transition-delay: var(--char-delay, 0ms);
+}
+.char-line.is-in .char {
+  transform: none;
+  opacity: 1;
+}
+
+/* --- 카드 위를 따라다니는 빛(스포트라이트) ------------------------------ */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-out);
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(240, 74, 30, 0.16),
+    transparent 62%
+  );
+}
+.spotlight:hover::before { opacity: 1; }
+.spotlight > * { position: relative; z-index: 1; }
+
+/* --- 프로젝트 카드 3D 기울임 -------------------------------------------- */
+.stories-grid { perspective: 1400px; }
+.story-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+/* 마우스를 올리면 아이콘과 글이 서로 다른 깊이로 떠오른다 */
+.story-card .story-visual { transform: translateZ(0); transition: transform 0.5s var(--ease-out); }
+.story-card:hover .story-visual { transform: translateZ(42px); }
+.story-card .story-title { transition: transform 0.5s var(--ease-out); }
+.story-card:hover .story-title { transform: translateZ(26px); }
+.story-card .story-actions { transition: transform 0.5s var(--ease-out); }
+.story-card:hover .story-actions { transform: translateZ(18px); }
+
+/* --- 버튼 물결(ripple) --------------------------------------------------- */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+  animation: ripple-out 0.65s var(--ease-out) forwards;
+  z-index: 2;
+}
+@keyframes ripple-out {
+  to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* --- 옆에 붙어 따라오는 챕터 표시줄 ------------------------------------- */
+.chapter-rail {
+  position: fixed;
+  left: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out);
+}
+.chapter-rail.is-visible { opacity: 1; }
+.chapter-rail__dot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  transition: color 0.4s var(--ease-out);
+}
+.chapter-rail__dot::before {
+  content: '';
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.45s var(--ease-out), background 0.4s var(--ease-out);
+}
+.chapter-rail__dot.is-active { color: var(--accent-crimson); }
+.chapter-rail__dot.is-active::before { width: 38px; }
+/* 밝은 띠 위를 지날 때는 글자가 보이도록 색을 뒤집는다 */
+.chapter-rail.on-light .chapter-rail__dot { color: rgba(0, 0, 0, 0.42); }
+.chapter-rail.on-light .chapter-rail__dot.is-active { color: var(--accent-crimson); }
+
+/* --- 마우스 커서 (섞임 모드로 글자 위에서 반전된다) ---------------------- */
+.custom-cursor { mix-blend-mode: difference; }
+.cursor-dot { background: #fff; }
+.cursor-circle {
+  border-color: rgba(255, 255, 255, 0.55);
+  transition: width 0.35s var(--ease-out), height 0.35s var(--ease-out),
+    border-color 0.35s var(--ease-out);
+}
+body.cursor-grow .cursor-circle {
+  width: 64px;
+  height: 64px;
+  border-color: var(--accent-crimson);
+}
+
+/* --- 스크롤 속도에 반응하는 마퀴 ---------------------------------------- */
+.marquee {
+  transform: skewY(var(--marquee-skew, 0deg));
+  transition: transform 0.55s var(--ease-out);
+}
+.marquee__track { animation-duration: var(--marquee-speed, 34s); }
+
+/* --- 등장할 때 살짝 흐림이 걷히는 효과 ---------------------------------- */
+[data-reveal] { filter: blur(6px); transition-property: opacity, transform, clip-path, filter; }
+[data-reveal].is-in { filter: blur(0); }
+
+/* --- 숫자 스트립: 칸에 마우스를 올리면 주황 밑줄이 자란다 ---------------- */
+.stat-strip__item { position: relative; }
+.stat-strip__item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: 100%;
+  background: var(--accent-crimson);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.5s var(--ease-out);
+}
+.stat-strip__item:hover::after { transform: scaleX(1); }
+
+/* --- 움직임 끄기 설정 존중 (추가분) ------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .char { opacity: 1 !important; transform: none !important; }
+  .marquee { transform: none !important; }
+  [data-reveal] { filter: none !important; }
+  .chapter-rail { display: none; }
+  .story-card:hover .story-visual,
+  .story-card:hover .story-title,
+  .story-card:hover .story-actions { transform: none; }
+}
+
+@media (max-width: 1280px) {
+  .chapter-rail { display: none; } /* 좁은 화면에서는 본문과 겹치므로 숨긴다 */
 }

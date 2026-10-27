@@ -39,19 +39,19 @@ function validateProjectPayload(data) {
 router.use(requireAdminAuth);
 
 // 관리자 화면 목록: 초안 포함 전체
-router.get('/projects', (req, res) => {
-  res.json(db.listAllProjects());
+router.get('/projects', async (req, res) => {
+  res.json(await db.listAllProjects());
 });
 
-router.get('/projects/:id', (req, res) => {
-  const project = db.getProjectById(req.params.id);
+router.get('/projects/:id', async (req, res) => {
+  const project = await db.getProjectById(req.params.id);
   if (!project) {
     return res.status(404).json({ error: '해당 프로젝트를 찾을 수 없습니다.' });
   }
   res.json(project);
 });
 
-router.post('/projects', (req, res) => {
+router.post('/projects', async (req, res) => {
   const data = req.body || {};
   const validationError = validateProjectPayload(data);
   if (validationError) {
@@ -59,7 +59,7 @@ router.post('/projects', (req, res) => {
   }
 
   try {
-    const created = db.createProject(data);
+    const created = await db.createProject(data);
     res.status(201).json(created);
   } catch (err) {
     console.error('[admin/projects] 생성 실패:', err.message);
@@ -67,7 +67,7 @@ router.post('/projects', (req, res) => {
   }
 });
 
-router.put('/projects/:id', (req, res) => {
+router.put('/projects/:id', async (req, res) => {
   const data = req.body || {};
   const validationError = validateProjectPayload(data);
   if (validationError) {
@@ -75,7 +75,7 @@ router.put('/projects/:id', (req, res) => {
   }
 
   try {
-    const updated = db.updateProject(req.params.id, data);
+    const updated = await db.updateProject(req.params.id, data);
     if (!updated) {
       return res.status(404).json({ error: '해당 프로젝트를 찾을 수 없습니다.' });
     }
@@ -86,8 +86,8 @@ router.put('/projects/:id', (req, res) => {
   }
 });
 
-router.delete('/projects/:id', (req, res) => {
-  const deleted = db.deleteProject(req.params.id);
+router.delete('/projects/:id', async (req, res) => {
+  const deleted = await db.deleteProject(req.params.id);
   if (!deleted) {
     return res.status(404).json({ error: '해당 프로젝트를 찾을 수 없습니다.' });
   }

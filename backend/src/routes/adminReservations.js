@@ -9,9 +9,9 @@ const router = express.Router();
 router.use(requireAdminAuth);
 
 // 관리자 화면 목록: 전체 예약 (최신 신청순)
-router.get('/reservations', (req, res) => {
+router.get('/reservations', async (req, res) => {
   try {
-    res.json(db.listAllReservations());
+    res.json(await db.listAllReservations());
   } catch (err) {
     console.error('[admin/reservations] 목록 조회 실패:', err.message);
     res.status(500).json({ error: '예약 목록을 불러오지 못했습니다.' });
@@ -19,7 +19,7 @@ router.get('/reservations', (req, res) => {
 });
 
 // 상태 변경: 접수 / 확정 / 변경 요청 / 취소
-router.patch('/reservations/:id/status', (req, res) => {
+router.patch('/reservations/:id/status', async (req, res) => {
   const { status } = req.body || {};
   const allowed = Object.keys(db.RESERVATION_STATUSES);
 
@@ -30,7 +30,7 @@ router.patch('/reservations/:id/status', (req, res) => {
   }
 
   try {
-    const updated = db.updateReservationStatus(req.params.id, status);
+    const updated = await db.updateReservationStatus(req.params.id, status);
     if (!updated) {
       return res.status(404).json({ error: '해당 예약을 찾을 수 없습니다.' });
     }

@@ -17,6 +17,8 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('../config');
+const { isSupabaseConfigured } = require('./supabaseClient');
+const supabaseStore = require('./supabaseStore');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data');
 const MESSAGES_STORE_PATH = path.join(DATA_DIR, 'messages.local.json');
@@ -50,6 +52,9 @@ function writeJsonStore(filePath, data) {
  * @param {{ name: string, email: string, message: string }} data
  */
 async function saveContactMessage(data) {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.saveContactMessage(data);
+
   if (isDatabaseConnected()) {
     // TODO(DB 연결 시 구현): DATABASE_URL이 채워지면 이 분기를 실제 DB 저장 로직으로 교체한다.
     //
@@ -142,7 +147,10 @@ function slotKey(date, time) {
  * 절대 포함하지 않는다 — 날짜와 시간만 내보낸다.
  * @returns {{ date: string, time: string }[]}
  */
-function listBookedSlots() {
+async function listBookedSlots() {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.listBookedSlots();
+
   const reservations = readJsonStore(RESERVATIONS_STORE_PATH);
   const seen = new Set();
   const slots = [];
@@ -161,9 +169,12 @@ function listBookedSlots() {
 }
 
 /** 해당 날짜·시간에 이미 예약이 있는지 확인한다. */
-function isSlotTaken(date, time) {
+async function isSlotTaken(date, time) {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.isSlotTaken(date, time);
+
   const key = slotKey(date, time);
-  return listBookedSlots().some((s) => slotKey(s.date, s.time) === key);
+  return (await listBookedSlots()).some((s) => slotKey(s.date, s.time) === key);
 }
 
 /** 관리자 화면에 내보내기 전에 예약 번호/상태를 보정한다. */
@@ -200,6 +211,9 @@ class SlotTakenError extends Error {
  * @throws {SlotTakenError} 해당 날짜·시간이 이미 찼을 때
  */
 async function saveReservation(data) {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.saveReservation(data);
+
   if (isDatabaseConnected()) {
     // TODO(DB 연결 시 구현): saveContactMessage()와 동일한 방식으로 실제 INSERT로 교체.
     // 그때는 (date, time)에 UNIQUE 제약을 걸어 DB 차원에서 중복을 막는 편이 확실하다.
@@ -233,7 +247,10 @@ async function saveReservation(data) {
 }
 
 /** 관리자 화면용: 전체 예약을 최신 신청순으로 반환한다. */
-function listAllReservations() {
+async function listAllReservations() {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.listAllReservations();
+
   const reservations = readJsonStore(RESERVATIONS_STORE_PATH);
   return reservations
     .map(decorateReservation)
@@ -245,7 +262,10 @@ function listAllReservations() {
  * @param {string|number} id
  * @param {'received'|'confirmed'|'change_requested'|'cancelled'} status
  */
-function updateReservationStatus(id, status) {
+async function updateReservationStatus(id, status) {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.updateReservationStatus(id, status);
+
   if (isDatabaseConnected()) {
     // TODO(DB 연결 시 구현): 실제 UPDATE 쿼리로 교체.
     throw new Error(
@@ -275,17 +295,26 @@ function generateProjectId() {
 }
 
 /** 관리자 화면용: 초안 포함 전체 프로젝트를 최신 수정순으로 반환한다. */
-function listAllProjects() {
+async function listAllProjects() {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.listAllProjects();
+
   const projects = readJsonStore(PROJECTS_STORE_PATH);
   return [...projects].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 }
 
 /** 공개 사이트용: status가 'published'인 프로젝트만 반환한다. */
-function listPublishedProjects() {
-  return listAllProjects().filter((p) => p.status === 'published');
+async function listPublishedProjects() {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.listPublishedProjects();
+
+  return (await listAllProjects()).filter((p) => p.status === 'published');
 }
 
-function getProjectById(id) {
+async function getProjectById(id) {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.getProjectById(id);
+
   const projects = readJsonStore(PROJECTS_STORE_PATH);
   return projects.find((p) => String(p.id) === String(id)) || null;
 }
@@ -294,7 +323,10 @@ function getProjectById(id) {
  * 새 프로젝트를 저장한다. (필수값 검증은 routes 쪽에서 이미 끝냈다고 가정)
  * @param {{ title, role, description, date, teamSize, notes, status }} data
  */
-function createProject(data) {
+async function createProject(data) {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.createProject(data);
+
   if (isDatabaseConnected()) {
     // TODO(DB 연결 시 구현): saveContactMessage()와 동일한 방식으로 실제 INSERT로 교체.
     throw new Error(
@@ -322,7 +354,10 @@ function createProject(data) {
 }
 
 /** 기존 프로젝트를 수정한다. 대상이 없으면 null을 반환한다. */
-function updateProject(id, data) {
+async function updateProject(id, data) {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.updateProject(id, data);
+
   if (isDatabaseConnected()) {
     // TODO(DB 연결 시 구현): 실제 UPDATE 쿼리로 교체.
     throw new Error(
@@ -351,7 +386,10 @@ function updateProject(id, data) {
 }
 
 /** 프로젝트를 삭제한다. 삭제되었으면 true, 대상이 없었으면 false. */
-function deleteProject(id) {
+async function deleteProject(id) {
+  // Supabase가 설정돼 있으면 DB에, 아니면 기존처럼 로컬 JSON 파일에 저장한다.
+  if (isSupabaseConfigured()) return supabaseStore.deleteProject(id);
+
   const projects = readJsonStore(PROJECTS_STORE_PATH);
   const next = projects.filter((p) => String(p.id) !== String(id));
   const changed = next.length !== projects.length;

@@ -5,8 +5,8 @@ const db = require('../db');
 
 const router = express.Router();
 
-router.get('/projects', (req, res) => {
-  res.json(db.listPublishedProjects());
+router.get('/projects', async (req, res) => {
+  res.json(await db.listPublishedProjects());
 });
 
 module.exports = router;

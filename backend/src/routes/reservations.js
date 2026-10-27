@@ -16,9 +16,9 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * 로그인 없이 누구나 호출할 수 있으므로, 신청자 이름/이메일/방문 목적 등
  * 개인정보는 일절 내보내지 않고 날짜와 시간만 반환한다.
  */
-router.get('/reservations/booked-slots', (req, res) => {
+router.get('/reservations/booked-slots', async (req, res) => {
   try {
-    res.json({ slots: db.listBookedSlots() });
+    res.json({ slots: await db.listBookedSlots() });
   } catch (err) {
     console.error('[reservations] 예약 현황 조회 실패:', err.message);
     res.status(500).json({ error: '예약 현황을 불러오지 못했습니다.' });
@@ -41,7 +41,9 @@ router.post('/reservations', async (req, res) => {
   }
 
   try {
-    const saved = await db.saveReservation({ date, time, name, email, purpose });
+    // consent는 위에서 확인만 하던 값이었는데, DB에 동의 시각(consent_at)을
+    // 남겨야 하므로 저장 계층까지 그대로 넘긴다.
+    const saved = await db.saveReservation({ date, time, name, email, purpose, consent });
     return res.status(201).json({ ok: true, id: saved.id, reservationNo: saved.reservationNo });
   } catch (err) {
     // 화면에서 막아도, 폼을 열어둔 사이에 다른 사람이 같은 시간을 예약했을 수 있다.

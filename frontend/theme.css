@@ -1,0 +1,1080 @@
+/* ==========================================================================
+   EDITORIAL INDUSTRIAL THEME  —  신재훈 포트폴리오
+   --------------------------------------------------------------------------
+   style.css 다음에 불러오는 "덧입히는" 테마 파일입니다.
+
+   왜 따로 뒀나요?
+     - style.css 는 index / visit / reservation / admin 5개 페이지가 같이 씁니다.
+       그래서 원본을 뜯어고치면 다른 페이지가 한꺼번에 깨집니다.
+     - 이 파일은 index.html 의 <link> 한 줄만 지우면 예전 디자인으로 바로 돌아갑니다.
+
+   되돌리는 법:  index.html 에서  <link rel="stylesheet" href="theme.css">  삭제
+
+   구성
+     01. 디자인 토큰          09. 마퀴 띠
+     02. 바탕 / 타이포        10. ABOUT 패널
+     03. 모션 기본            11. SKILLS
+     04. 스크롤 진행 바       12. PROJECTS
+     05. 헤더                 13. TIMELINE
+     06. 섹션 머리말          14. CONTACT
+     07. 히어로               15. 푸터 / 게이트 / 커서
+     08. 숫자 스트립          16. 반응형
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   01. 디자인 토큰
+   ------------------------------------------------------------------------ */
+:root {
+  /* 바탕 — 차갑고 중성적인 먹색 (레퍼런스의 산업용 그레이스케일) */
+  --bg-noir: #0d0e10;
+  --bg-deep: #08090a;
+  --bg-panel: #141518;
+  --bg-panel-sub: #1b1d21;
+  --bg-input: #121316;
+
+  /* 포인트 색 — 레퍼런스의 주황 하나로 통일 (금색/빨강/파랑을 전부 대체) */
+  --accent-crimson: #f04a1e;
+  --accent-crimson-bright: #ff7a4d;
+  --accent-crimson-glow: rgba(240, 74, 30, 0.3);
+  --accent-red: #f04a1e;
+  --accent-red-bright: #ff7a4d;
+  --accent-blue: #8a8c90;
+  --accent-blue-bright: #c9cbcf;
+  --accent-blue-glow: rgba(255, 255, 255, 0.12);
+  --border-crimson: #f04a1e;
+  --pixel-ink: #08090a;
+
+  /* 글자 */
+  --text-pure: #ffffff;
+  --text-primary: #e8e8e6;
+  --text-secondary: #9b9c9f;
+  --text-muted: #65676b;
+
+  /* 선 — 레퍼런스의 얇은 헤어라인 */
+  --border-line: rgba(255, 255, 255, 0.1);
+  --border-line-light: rgba(255, 255, 255, 0.2);
+
+  /* 밝은 띠 (섹션 하나를 흰 배경으로 뒤집을 때) */
+  --paper: #efeee9;
+  --paper-sub: #e2e1db;
+  --paper-ink: #111214;
+  --paper-mute: #7c7d7a;
+  --paper-line: rgba(0, 0, 0, 0.14);
+
+  /* 글꼴 — 장식 서체와 픽셀 서체를 모두 산업용 그로테스크로 교체 */
+  --font-display: 'Inter Tight', 'Pretendard', sans-serif;
+  --font-serif: 'Inter Tight', 'Pretendard', sans-serif;
+  --font-body: 'Pretendard', 'Inter Tight', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-pixel: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* 모서리 */
+  --r-sm: 3px;
+  --r-md: 12px;
+  --r-lg: 22px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-fast: 0.25s var(--ease-out);
+  --transition-smooth: 0.6s var(--ease-out);
+}
+
+/* --------------------------------------------------------------------------
+   02. 바탕 / 타이포
+   ------------------------------------------------------------------------ */
+body {
+  background-color: var(--bg-noir);
+  /* 초록빛 그라데이션 제거 — 레퍼런스는 완전히 중성적인 회색 바탕 */
+  background-image: none;
+}
+
+/* 종이 질감 노이즈는 아주 옅게만 남긴다 */
+.noise-bg { opacity: 0.025; }
+
+::selection { background: var(--accent-crimson); color: #fff; }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: #26282c; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-crimson); }
+
+/* style.css 의 픽셀 서체 그림자를 전부 끈다 */
+.editorial-title,
+.gate-main-title,
+.footer-huge-sign,
+.projects-title,
+.santioni-btn { text-shadow: none !important; }
+
+/* --------------------------------------------------------------------------
+   03. 모션 기본
+   --------------------------------------------------------------------------
+   motion.js 가 요소에 data-reveal 을 붙이고, 화면에 들어오면 is-in 을 더한다.
+   CSS 는 "어떻게 보일지"만, JS 는 "언제 보일지"만 담당한다.
+   ------------------------------------------------------------------------ */
+[data-reveal] {
+  opacity: 0;
+  transition:
+    opacity 0.9s var(--ease-out),
+    transform 0.9s var(--ease-out),
+    clip-path 1s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal='up']    { transform: translate3d(0, 46px, 0); }
+[data-reveal='fade']  { transform: none; }
+[data-reveal='left']  { transform: translate3d(-46px, 0, 0); }
+[data-reveal='right'] { transform: translate3d(46px, 0, 0); }
+[data-reveal='zoom']  { transform: scale(1.07); }
+[data-reveal='wipe']  { clip-path: inset(0 100% 0 0); transform: none; }
+
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0 0);
+}
+
+/* 큰 제목은 한 줄씩 아래에서 밀려 올라온다 (motion.js 가 줄을 감싼다) */
+.line-mask { display: block; overflow: hidden; }
+.line-mask > span {
+  display: block;
+  transform: translate3d(0, 105%, 0);
+  transition: transform 1s var(--ease-out);
+  transition-delay: var(--line-delay, 0ms);
+}
+.line-mask.is-in > span { transform: none; }
+
+/* 움직임을 싫어하는 사용자는 전부 끈다 (접근성) */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  .line-mask > span {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+  .marquee__track { animation: none !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* --------------------------------------------------------------------------
+   04. 스크롤 진행 바
+   ------------------------------------------------------------------------ */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  z-index: 9999;
+  pointer-events: none;
+}
+.scroll-progress__bar {
+  height: 100%;
+  width: 100%;
+  background: var(--accent-crimson);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+/* --------------------------------------------------------------------------
+   05. 헤더 — 알약 모양을 각진 편집 바로 교체
+   ------------------------------------------------------------------------ */
+.header-capsule {
+  border-radius: var(--r-sm);
+  background: rgba(13, 14, 16, 0.72);
+  border: 1px solid var(--border-line);
+  box-shadow: none;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  padding: 11px 14px 11px 20px;
+}
+.brand-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.brand-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+}
+.brand-pixel-icon { fill: var(--accent-crimson); }
+
+.header-nav .nav-item {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  position: relative;
+  padding: 6px 2px;
+  transition: color var(--transition-fast);
+}
+/* 밑줄이 왼쪽에서 자라나는 효과 */
+.header-nav .nav-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: var(--accent-crimson);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.4s var(--ease-out);
+}
+.header-nav .nav-item:hover,
+.header-nav .nav-item.active { color: var(--text-pure); }
+.header-nav .nav-item:hover::after,
+.header-nav .nav-item.active::after { transform: scaleX(1); }
+
+.icon-btn {
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-line);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+.icon-btn:hover {
+  background: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+  color: #fff;
+}
+.share-dropdown { border-radius: var(--r-sm); }
+
+/* --------------------------------------------------------------------------
+   06. 섹션 머리말 — 레퍼런스의 "/ 02   OUR FOCUS" 형식
+   ------------------------------------------------------------------------ */
+.scene { padding: 150px 0; }
+
+.scene-meta-header {
+  border-bottom: 1px solid var(--border-line);
+  padding-bottom: 14px;
+  margin-bottom: 64px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.meta-num {
+  color: var(--accent-crimson);
+  font-weight: 600;
+  margin-right: 18px;
+}
+.meta-label { color: var(--text-secondary); }
+.meta-dept { color: var(--text-muted); }
+
+/* 섹션 대제목 — 크고 납작하고 자간이 좁은 산업용 그로테스크 */
+.section-title-wrapper { margin-bottom: 72px; }
+.editorial-title,
+.projects-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.4rem, 6.2vw, 5.2rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  color: var(--text-pure);
+}
+/* 제목 뒷부분을 회색으로 죽이는 레퍼런스 기법 */
+.title-dim { color: var(--text-muted); }
+
+.editorial-subtitle,
+.projects-subtitle {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin-top: 22px;
+  max-width: 46ch;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.projects-header { margin-bottom: 48px; }
+.projects-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  color: var(--accent-crimson);
+}
+
+/* 섹션 하나를 밝은 띠로 뒤집기 (레퍼런스의 흑/백 교차) */
+.scene--light {
+  background: var(--paper);
+  color: var(--paper-ink);
+}
+.scene--light .editorial-title,
+.scene--light .matrix-title { color: var(--paper-ink); }
+.scene--light .editorial-subtitle,
+.scene--light .meta-label,
+.scene--light .meta-dept { color: var(--paper-mute); }
+.scene--light .scene-meta-header { border-color: var(--paper-line); }
+.scene--light .panel-box {
+  background: #fff;
+  border-color: var(--paper-line);
+  box-shadow: none;
+}
+.scene--light .panel-box:hover {
+  border-color: var(--accent-crimson);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   07. 히어로
+   ------------------------------------------------------------------------ */
+.scene-hero { padding-top: 190px; padding-bottom: 90px; }
+
+.hero-title-area { margin: 40px 0 56px; }
+.hero-huge-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+}
+.title-line {
+  font-size: clamp(3rem, 12vw, 10.5rem);
+  letter-spacing: -0.045em;
+  line-height: 0.86;
+  color: var(--text-pure);
+}
+/* 두 번째 줄을 회색으로 — 레퍼런스의 "THE WORLD" 처리.
+   style.css 원본이 line-height 1.8 이라 줄 사이가 크게 벌어진다. 반드시 덮어쓴다. */
+.title-subline {
+  font-size: clamp(2.2rem, 8vw, 7rem);
+  letter-spacing: -0.045em;
+  line-height: 0.86;
+  font-weight: 800;
+  color: var(--text-muted);
+  -webkit-text-fill-color: currentColor;
+  background: none;
+}
+
+.hero-split-grid { gap: 20px; }
+
+.panel-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-md);
+  box-shadow: none;
+  transition: border-color var(--transition-fast), transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+.panel-box:hover {
+  border-color: var(--border-line-light);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+/* 모서리의 + 표시는 아주 옅게 — 레퍼런스의 얇은 제도선 느낌 */
+.panel-corners .corner { color: var(--text-muted); opacity: 0.5; }
+
+.panel-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: var(--accent-crimson);
+  text-transform: uppercase;
+}
+
+.photo-panel { border-radius: var(--r-lg); overflow: hidden; }
+.photo-wrapper { overflow: hidden; }
+.editorial-img {
+  filter: grayscale(1) contrast(1.08);
+  transform: scale(1.02);
+  transition: filter 0.7s var(--ease-out), transform 0.9s var(--ease-out);
+}
+.photo-panel:hover .editorial-img {
+  filter: grayscale(0) contrast(1);
+  transform: scale(1.06);
+}
+.photo-tint-overlay {
+  background: linear-gradient(180deg, rgba(8, 9, 10, 0) 45%, rgba(8, 9, 10, 0.72) 100%);
+}
+
+.statement-heading {
+  font-family: var(--font-body);
+  font-size: clamp(1.35rem, 2.3vw, 1.95rem);
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--text-pure);
+}
+.crimson-highlight {
+  color: var(--accent-crimson);
+  background: none;
+  -webkit-text-fill-color: currentColor;
+}
+.statement-divider {
+  height: 1px;
+  background: var(--border-line);
+  margin: 26px 0;
+}
+.statement-paragraph {
+  color: var(--text-secondary);
+  line-height: 1.85;
+  font-size: 0.97rem;
+}
+.editorial-typing {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+.typing-lead { color: var(--accent-crimson); }
+.typing-cursor { color: var(--accent-crimson); }
+
+.panel-footer-meta { border-top: 1px solid var(--border-line); }
+.foot-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+}
+.foot-val { color: var(--text-primary); font-size: 0.86rem; }
+
+/* --------------------------------------------------------------------------
+   버튼 — 픽셀 게임풍(3px 테두리 + 블록 그림자)을 편집형 버튼으로 교체
+   ------------------------------------------------------------------------ */
+.santioni-btn,
+.santioni-action-btn,
+.ed-social-btn,
+.santioni-copy-btn,
+.gate-btn {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  border: 1px solid var(--border-line-light);
+  box-shadow: none;
+  padding: 14px 26px;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.35s var(--ease-out), border-color 0.35s var(--ease-out),
+    background-color 0.35s var(--ease-out);
+}
+/* 호버 시 색이 아래에서 차오른다 */
+.santioni-btn::before,
+.santioni-action-btn::before,
+.ed-social-btn::before,
+.gate-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-crimson);
+  transform: translate3d(0, 101%, 0);
+  transition: transform 0.45s var(--ease-out);
+  z-index: -1;
+}
+.santioni-btn:hover::before,
+.santioni-action-btn:hover::before,
+.ed-social-btn:hover::before,
+.gate-btn:hover::before { transform: none; }
+
+.santioni-btn > *,
+.santioni-action-btn > *,
+.ed-social-btn > * { position: relative; z-index: 1; }
+
+.santioni-btn,
+.gate-btn { isolation: isolate; }
+
+.btn-filled {
+  background: var(--text-pure);
+  color: var(--bg-deep);
+  border-color: var(--text-pure);
+}
+.btn-filled:hover {
+  color: #fff;
+  border-color: var(--accent-crimson);
+  transform: none;
+}
+.btn-outlined {
+  background: transparent;
+  color: var(--text-primary);
+}
+.btn-outlined:hover { color: #fff; border-color: var(--accent-crimson); transform: none; }
+
+/* 둥근 화살표 버튼 — 레퍼런스의 ( → ) 아이콘 */
+.circle-arrow {
+  width: 54px;
+  height: 54px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-line-light);
+  color: var(--text-primary);
+  background: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  transition: color 0.35s var(--ease-out), border-color 0.35s var(--ease-out);
+}
+.circle-arrow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent-crimson);
+  transform: scale(0);
+  transition: transform 0.45s var(--ease-out);
+}
+.circle-arrow i { position: relative; z-index: 1; }
+.circle-arrow:hover { color: #fff; border-color: var(--accent-crimson); }
+.circle-arrow:hover::before { transform: scale(1); }
+
+/* --------------------------------------------------------------------------
+   08. 숫자 스트립 — 레퍼런스의 통계 기둥
+   ------------------------------------------------------------------------ */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border-line);
+  margin-top: 70px;
+}
+.stat-strip__item {
+  padding: 34px 26px 30px 0;
+  border-bottom: 1px solid var(--border-line);
+}
+.stat-strip__num {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.4rem, 4.6vw, 3.9rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text-pure);
+}
+.stat-strip__num .unit { color: var(--accent-crimson); }
+.stat-strip__label {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   09. 마퀴 띠 — 끊임없이 흐르는 키워드 줄
+   ------------------------------------------------------------------------ */
+.marquee {
+  overflow: hidden;
+  border-top: 1px solid var(--border-line);
+  border-bottom: 1px solid var(--border-line);
+  background: var(--bg-deep);
+  padding: 26px 0;
+}
+.marquee__track {
+  display: flex;
+  width: max-content;
+  gap: 48px;
+  animation: marquee-slide 34s linear infinite;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__item {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.3rem, 3vw, 2.4rem);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+.marquee__item::after {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-crimson);
+  flex: none;
+}
+@keyframes marquee-slide {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* --------------------------------------------------------------------------
+   10. ABOUT 패널
+   ------------------------------------------------------------------------ */
+.about-panels-grid { gap: 20px; }
+.about-item-panel { padding: 38px 30px 34px; }
+.panel-num {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  color: var(--accent-crimson);
+}
+.panel-icon-wrap {
+  color: var(--accent-crimson);
+  background: transparent;
+  border: 1px solid var(--border-line);
+  border-radius: 50%;
+  transition: background 0.4s var(--ease-out), color 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out);
+}
+.about-item-panel:hover .panel-icon-wrap {
+  background: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+  color: #fff;
+}
+.panel-heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.22rem;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-pure);
+}
+.panel-korean-sub {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent-crimson);
+}
+.panel-text { color: var(--text-secondary); line-height: 1.8; font-size: 0.92rem; }
+
+/* --------------------------------------------------------------------------
+   11. SKILLS
+   ------------------------------------------------------------------------ */
+.skills-matrix-grid { gap: 20px; }
+.skill-col-panel { padding: 36px 30px; }
+.matrix-header { border-bottom: 1px solid var(--border-line); padding-bottom: 16px; }
+.scene--light .matrix-header { border-color: var(--paper-line); }
+.matrix-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+}
+.matrix-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  color: var(--accent-crimson);
+}
+.matrix-item {
+  border-bottom: 1px solid var(--border-line);
+  padding: 14px 0;
+  transition: padding-left 0.35s var(--ease-out), color 0.35s var(--ease-out);
+}
+.scene--light .matrix-item { border-color: var(--paper-line); }
+.matrix-item:hover { padding-left: 10px; color: var(--accent-crimson); }
+.m-name { font-family: var(--font-body); font-weight: 600; letter-spacing: -0.01em; }
+.m-val { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); }
+
+/* 원본은 레트로 게임의 체력바(검은 2px 테두리 + 초록~빨강 그라데이션)였다.
+   편집형 디자인에서는 얇은 주황 선 하나로 바꾼다. 테두리/그림자를 반드시 꺼야
+   밝은 띠 위에서 검은 막대처럼 보이지 않는다. */
+.m-bar {
+  height: 3px;
+  background: var(--border-line);
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.m-fill {
+  background: var(--accent-crimson);
+  border-radius: 0;
+}
+
+/* 밝은 띠(SKILLS) 안에서의 글자색 — 흰 바탕에 묻히지 않도록 */
+.scene--light .m-name { color: var(--paper-ink); }
+.scene--light .m-val { color: var(--paper-mute); }
+.scene--light .m-bar { background: rgba(0, 0, 0, 0.12); }
+.scene--light .panel-corners .corner { color: rgba(0, 0, 0, 0.22); }
+.scene--light .matrix-item:hover { color: var(--accent-crimson); }
+
+/* --------------------------------------------------------------------------
+   12. PROJECTS
+   ------------------------------------------------------------------------ */
+.editorial-filters { gap: 10px; margin-bottom: 44px; }
+.ed-filter-btn {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  border: 1px solid var(--border-line);
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 11px 20px;
+  box-shadow: none;
+  transition: all var(--transition-fast);
+}
+.ed-filter-btn:hover { border-color: var(--border-line-light); color: var(--text-pure); transform: none; }
+.ed-filter-btn.active {
+  background: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+  color: #fff;
+  transform: none;
+  box-shadow: none;
+}
+
+.stories-grid { gap: 20px; }
+.story-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-lg);
+  transition: transform 0.5s var(--ease-out), border-color 0.4s var(--ease-out),
+    box-shadow 0.5s var(--ease-out);
+}
+.story-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--border-line-light);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+}
+.story-visual {
+  position: relative;
+  overflow: hidden;
+  transition: background 0.5s var(--ease-out);
+}
+/* 카드에 마우스를 올리면 안쪽이 주황으로 번진다 */
+.story-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--accent-crimson), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out);
+}
+.story-card:hover .story-visual::after { opacity: 0.35; }
+.story-icon {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.6s var(--ease-out);
+}
+.story-card:hover .story-icon { transform: scale(1.14) rotate(-6deg); }
+
+.story-category-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-crimson);
+  background: transparent;
+  border: 1px solid var(--border-line);
+  border-radius: 9999px;
+  padding: 5px 12px;
+}
+.story-title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.16rem;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--text-pure);
+}
+.story-summary { color: var(--text-secondary); line-height: 1.75; font-size: 0.91rem; }
+.story-tags span {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  background: var(--bg-panel-sub);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  padding: 4px 9px;
+}
+.story-award-badge {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  color: var(--accent-crimson);
+}
+.santioni-action-btn { padding: 12px 20px; }
+.santioni-action-btn i { transition: transform 0.4s var(--ease-out); }
+.santioni-action-btn:hover i { transform: translateX(5px); }
+.story-link-icon {
+  border: 1px solid var(--border-line);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+.story-link-icon:hover {
+  background: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   13. TIMELINE
+   ------------------------------------------------------------------------ */
+.editorial-timeline { gap: 0; }
+.timeline-row {
+  border: none;
+  border-top: 1px solid var(--border-line);
+  border-radius: 0;
+  background: transparent;
+  padding: 40px 0;
+  transition: padding-left 0.5s var(--ease-out), background 0.5s var(--ease-out);
+}
+.timeline-row:last-child { border-bottom: 1px solid var(--border-line); }
+.timeline-row:hover {
+  padding-left: 22px;
+  background: var(--bg-panel);
+  box-shadow: none;
+  border-color: var(--border-line);
+}
+.timeline-row .panel-corners { display: none; }
+.t-year {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--accent-crimson);
+}
+/* 배지는 글자 폭에만 맞춘다. (부모가 세로 flex라 그냥 두면 가로로 꽉 늘어난다) */
+.t-badge {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border-line);
+  border-radius: 9999px;
+  padding: 4px 11px;
+  display: inline-block;
+  width: fit-content;
+  align-self: flex-start;
+}
+.t-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.3rem, 2.6vw, 2rem);
+  letter-spacing: -0.03em;
+  color: var(--text-pure);
+}
+.t-role { color: var(--accent-crimson); font-weight: 600; font-size: 0.93rem; }
+.t-desc { color: var(--text-secondary); line-height: 1.8; font-size: 0.93rem; }
+
+/* --------------------------------------------------------------------------
+   14. CONTACT
+   ------------------------------------------------------------------------ */
+.contact-editorial-grid { gap: 20px; }
+.contact-direct-panel,
+.contact-form-panel { padding: 40px 34px; }
+.direct-item { border-bottom: 1px solid var(--border-line); }
+.direct-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+}
+.direct-val {
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-pure);
+}
+.direct-sub { color: var(--text-secondary); font-size: 0.86rem; }
+
+.ed-field label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+.ed-field input,
+.ed-field textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+.ed-field input:focus,
+.ed-field textarea:focus {
+  border-color: var(--accent-crimson);
+  background: var(--bg-panel);
+  outline: none;
+}
+/* 세로 flex 안에서 버튼이 가로로 꽉 늘어나지 않도록 글자 폭에 맞춘다 */
+.ed-social-btn {
+  padding: 11px 18px;
+  font-size: 0.66rem;
+  width: fit-content;
+  align-self: flex-start;
+}
+.santioni-copy-btn {
+  padding: 9px 16px;
+  font-size: 0.62rem;
+  width: fit-content;
+  align-self: flex-start;
+}
+.editorial-social-links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* 한글은 어절 단위로 줄바꿈해야 읽기 좋다 ("보내/주세요" 처럼 잘리는 것 방지) */
+.editorial-subtitle,
+.projects-subtitle,
+.statement-paragraph,
+.panel-text,
+.story-summary,
+.t-desc,
+.m-sec-desc { word-break: keep-all; overflow-wrap: break-word; }
+
+/* --------------------------------------------------------------------------
+   15. 푸터 / 게이트 / 커서 / 모달
+   ------------------------------------------------------------------------ */
+.editorial-footer { background: var(--bg-deep); border-top: 1px solid var(--border-line); }
+.footer-huge-sign {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: rgba(255, 255, 255, 0.055);
+  font-size: clamp(2.8rem, 15vw, 13rem);
+  line-height: 0.85;
+}
+.f-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+}
+.f-top-link,
+.footer-admin-link { transition: color var(--transition-fast); }
+.f-top-link:hover,
+.footer-admin-link:hover { color: var(--accent-crimson); }
+.footer-bottom-line { border-top: 1px solid var(--border-line); }
+
+/* 입장 화면 — 더 어둡고 영화적으로 (두 번째 레퍼런스의 분위기) */
+.gate-overlay { background: var(--bg-deep); }
+.gate-label,
+.gate-instruction,
+.gate-hint {
+  font-family: var(--font-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.64rem;
+  color: var(--text-muted);
+}
+.gate-main-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 11vw, 9rem);
+  letter-spacing: -0.045em;
+  line-height: 0.88;
+  color: var(--text-pure);
+}
+.gate-sub-title {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--accent-crimson);
+}
+.gate-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-md);
+  box-shadow: none;
+}
+.gate-input-wrapper input {
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  background: var(--bg-input);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  color: var(--text-primary);
+}
+.gate-input-wrapper input:focus { border-color: var(--accent-crimson); outline: none; }
+.gate-corners .corner { color: var(--text-muted); opacity: 0.45; }
+
+/* 마우스 커서 */
+.cursor-dot { background: var(--accent-crimson); }
+.cursor-circle { border-color: var(--border-line-light); }
+
+/* 프로젝트 모달 */
+.story-modal-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-lg);
+}
+.m-modal-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-pure);
+}
+.m-cat,
+.m-sec-title {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-crimson);
+}
+.m-sec-desc,
+.m-sec-list { color: var(--text-secondary); line-height: 1.8; }
+.m-sec-tags span {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  background: var(--bg-panel-sub);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+}
+.modal-exit-btn {
+  border-radius: 50%;
+  border: 1px solid var(--border-line);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+.modal-exit-btn:hover { background: var(--accent-crimson); border-color: var(--accent-crimson); color: #fff; }
+
+/* 소리 토글 */
+.sound-toggle {
+  border-radius: 9999px;
+  border: 1px solid var(--border-line);
+  background: rgba(13, 14, 16, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.sound-text {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+.sound-bars .bar { background: var(--accent-crimson); }
+
+/* --------------------------------------------------------------------------
+   16. 반응형
+   ------------------------------------------------------------------------ */
+@media (max-width: 1024px) {
+  .scene { padding: 110px 0; }
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .stat-strip__item { padding-right: 18px; }
+}
+
+/* 아주 좁은 화면(구형 소형 휴대폰)에서 큰 제목이 밖으로 삐져나가지 않도록 */
+@media (max-width: 520px) {
+  .editorial-container { padding: 0 20px; }
+  .title-line { font-size: clamp(2.3rem, 12.5vw, 3.6rem); }
+  .title-subline { font-size: clamp(1.7rem, 9vw, 2.6rem); }
+  .editorial-title,
+  .projects-title { font-size: clamp(1.9rem, 9vw, 2.8rem); }
+  .stat-strip__num { font-size: clamp(1.9rem, 9vw, 2.6rem); }
+  .hero-btn-row { flex-wrap: wrap; }
+}
+
+@media (max-width: 768px) {
+  .scene { padding: 86px 0; }
+  .scene-hero { padding-top: 150px; }
+  .section-title-wrapper { margin-bottom: 48px; }
+  .scene-meta-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .marquee { padding: 18px 0; }
+  .timeline-row { padding: 30px 0; }
+  .timeline-row:hover { padding-left: 10px; }
+  .contact-direct-panel,
+  .contact-form-panel { padding: 30px 22px; }
+}

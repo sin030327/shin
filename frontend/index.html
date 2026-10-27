@@ -15,8 +15,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
+  <!-- 편집형 디자인용 서체: Inter Tight(큰 제목) + IBM Plex Mono(작은 라벨) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
+  <!-- 편집형 테마(덧입히는 레이어). 이 한 줄을 지우면 이전 디자인으로 되돌아갑니다. -->
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body class="locked-state">
 
@@ -28,6 +33,11 @@
 
   <!-- Noise Overlay -->
   <div class="noise-bg"></div>
+
+  <!-- 스크롤 진행 바: 페이지를 얼마나 내려왔는지 위쪽 주황 선으로 보여준다 -->
+  <div class="scroll-progress" aria-hidden="true">
+    <div class="scroll-progress__bar"></div>
+  </div>
 
   <!-- ======================================================================
        0. Cinematic AgeGate / Passcode Screen (Santioni Style)
@@ -170,7 +180,7 @@
         <!-- Top Editorial Meta -->
         <div class="scene-meta-header">
           <div class="meta-left">
-            <span class="meta-num">[ SCENE 01 ]</span>
+            <span class="meta-num">/ 01</span>
             <span class="meta-label">PORTFOLIO OVERTURE &bull; SEOUL, KR</span>
           </div>
           <div class="meta-right">
@@ -265,8 +275,42 @@
             </div>
           </div>
         </div>
+
+        <!-- 숫자 스트립
+             ★ 전부 이 페이지에 실제로 올라와 있는 항목을 센 값입니다.
+                프로젝트 카드 6개 / 기술 항목 12개 / 수상 1회 / 챕터 6개.
+                내용이 늘어나면 data-count 숫자도 같이 고쳐주세요. -->
+        <div class="stat-strip">
+          <div class="stat-strip__item">
+            <span class="stat-strip__num"><span data-count="6">6</span></span>
+            <span class="stat-strip__label">Projects</span>
+          </div>
+          <div class="stat-strip__item">
+            <span class="stat-strip__num"><span data-count="12">12</span></span>
+            <span class="stat-strip__label">Technologies</span>
+          </div>
+          <div class="stat-strip__item">
+            <span class="stat-strip__num"><span data-count="1">1</span></span>
+            <span class="stat-strip__label">Design Award</span>
+          </div>
+          <div class="stat-strip__item">
+            <span class="stat-strip__num"><span data-count="6">6</span></span>
+            <span class="stat-strip__label">Chapters</span>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- 흐르는 키워드 띠. 내용은 motion.js가 한 벌 더 복제해 끊김 없이 돌린다. -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span class="marquee__item">LANDSCAPE</span>
+        <span class="marquee__item">URBAN DATA</span>
+        <span class="marquee__item">WEB DEVELOPMENT</span>
+        <span class="marquee__item">SPATIAL DESIGN</span>
+        <span class="marquee__item">SHIN JAEHOON</span>
+      </div>
+    </div>
 
     <!-- --------------------------------------------------
          SCENE 02: ABOUT & PHILOSOPHY
@@ -275,7 +319,7 @@
       <div class="editorial-container">
         <div class="scene-meta-header">
           <div class="meta-left">
-            <span class="meta-num">[ SCENE 02 ]</span>
+            <span class="meta-num">/ 02</span>
             <span class="meta-label">PROFILE & PHILOSOPHY</span>
           </div>
           <div class="meta-right">
@@ -284,7 +328,7 @@
         </div>
 
         <div class="section-title-wrapper">
-          <h2 class="editorial-title">THE LANDSCAPE MIND</h2>
+          <h2 class="editorial-title">THE LANDSCAPE <span class="title-dim">MIND</span></h2>
           <p class="editorial-subtitle">장소를 읽고 사람과 자연의 관계를 설계하는 원칙</p>
         </div>
 
@@ -344,11 +388,11 @@
     <!-- --------------------------------------------------
          SCENE 03: TECH MATRIX (SKILLS)
          -------------------------------------------------- -->
-    <section class="scene scene-skills" id="skills">
+    <section class="scene scene--light scene-skills" id="skills">
       <div class="editorial-container">
         <div class="scene-meta-header">
           <div class="meta-left">
-            <span class="meta-num">[ SCENE 03 ]</span>
+            <span class="meta-num">/ 03</span>
             <span class="meta-label">TECHNICAL MATRIX</span>
           </div>
           <div class="meta-right">
@@ -357,7 +401,7 @@
         </div>
 
         <div class="section-title-wrapper">
-          <h2 class="editorial-title">SKILLS & CAPABILITIES</h2>
+          <h2 class="editorial-title">SKILLS &amp; <span class="title-dim">CAPABILITIES</span></h2>
           <p class="editorial-subtitle">문제를 해결하기 위해 적재적소에 활용하는 기술 스택</p>
         </div>
 
@@ -488,7 +532,7 @@
     <section class="scene scene-projects" id="projects">
       <div class="editorial-container">
         <div class="projects-header">
-          <span class="projects-eyebrow">PROJECTS</span>
+          <span class="projects-eyebrow">/ 04 &nbsp; SELECTED WORK</span>
           <h2 class="projects-title">프로젝트</h2>
           <p class="projects-subtitle">직접 기획하고 개발한 주요 프로젝트입니다. 카드를 클릭하면 자세한 내용을 볼 수 있습니다.</p>
         </div>
@@ -701,7 +745,7 @@
       <div class="editorial-container">
         <div class="scene-meta-header">
           <div class="meta-left">
-            <span class="meta-num">[ SCENE 05 ]</span>
+            <span class="meta-num">/ 05</span>
             <span class="meta-label">CHRONOLOGICAL ARCHIVE</span>
           </div>
           <div class="meta-right">
@@ -710,7 +754,7 @@
         </div>
 
         <div class="section-title-wrapper">
-          <h2 class="editorial-title">TIMELINE & JOURNEY</h2>
+          <h2 class="editorial-title">TIMELINE &amp; <span class="title-dim">JOURNEY</span></h2>
           <p class="editorial-subtitle">상명대학교에서의 전공 심화 및 개발 발자취</p>
         </div>
 
@@ -781,7 +825,7 @@
       <div class="editorial-container">
         <div class="scene-meta-header">
           <div class="meta-left">
-            <span class="meta-num">[ SCENE 06 ]</span>
+            <span class="meta-num">/ 06</span>
             <span class="meta-label">TRANSMISSION & CONTACT</span>
           </div>
           <div class="meta-right">
@@ -790,7 +834,7 @@
         </div>
 
         <div class="section-title-wrapper">
-          <h2 class="editorial-title">INITIATE CONTACT</h2>
+          <h2 class="editorial-title">INITIATE <span class="title-dim">CONTACT</span></h2>
           <p class="editorial-subtitle">협업 제안, 프로젝트 문의 또는 이야기를 나누고 싶다면 메시지를 보내주세요.</p>
         </div>
 
@@ -969,5 +1013,7 @@
 
   <!-- Scripts -->
   <script src="script.js"></script>
+  <!-- 스크롤 연출 엔진. script.js 다음에 두어야 한다 (DOM이 모두 준비된 뒤 동작). -->
+  <script src="motion.js"></script>
 </body>
 </html>

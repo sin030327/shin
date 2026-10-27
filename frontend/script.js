@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'Clean Architecture & Modular Systems',
     'Interactive Frontends with Depth',
     'Robust Backend REST APIs & Databases',
-    'SangMyung Univ. Software Engineer'
+    'SangMyung Univ. Green Smart City'
   ];
   let phraseIdx = 0;
   let charIdx = 0;

@@ -367,7 +367,7 @@ insert into skills (category_id, name, level, display_order)
 -- ---------------------------------------------------------------------------
 delete from timeline_entries;
 insert into timeline_entries (period_label, title, role, description, display_order)
-  values ('2024 - PRESENT', '상명대학교 (SangMyung University)', '소프트웨어 전공 심화', '자료구조, 알고리즘, 운영체제, 컴퓨터 네트워크, 데이터베이스 등 탄탄한 컴퓨터 공학 기초 이론을 이수하고 다양한 전공 팀 프로젝트를 수행 중입니다.', 1);
+  values ('2024 - PRESENT', '상명대학교 (SangMyung University)', '그린스마트시티학과 전공 심화', '자료구조, 알고리즘, 운영체제, 컴퓨터 네트워크, 데이터베이스 등 탄탄한 컴퓨터 공학 기초 이론을 이수하고 다양한 전공 팀 프로젝트를 수행 중입니다.', 1);
 insert into timeline_entries (period_label, title, role, description, display_order)
   values ('2025', '대한민국 전통조경대전 제2회', '장려상 수상 · 청도서원(淸道書院)', '전통조경의 공간성과 장소성을 현대적으로 해석한 팀 프로젝트 "청도서원(淸道書院)"으로 대한민국 전통조경대전 제2회에서 장려상을 수상했습니다.', 2);
 

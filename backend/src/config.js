@@ -15,7 +15,13 @@ const config = {
 
   // 아직 비어 있어도 정상 동작해야 한다 (DB 미연결 상태 지원).
   // 값이 채워지면 db/index.js가 이 값을 읽어 실제 연결을 시도하게 된다.
-  databaseUrl: process.env.DATABASE_URL || ''
+  databaseUrl: process.env.DATABASE_URL || '',
+
+  // Supabase. 세 값이 비어 있으면 기존의 로컬 JSON 파일 저장 방식으로 동작한다.
+  // serviceRoleKey는 모든 보안 규칙을 통과하는 열쇠이므로 서버에서만 사용한다.
+  supabaseUrl: process.env.SUPABASE_URL || '',
+  supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
+  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 };
 
 module.exports = config;
